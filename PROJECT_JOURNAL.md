@@ -518,3 +518,104 @@ Both Power Automate actions completed successfully:
 This is the first successfully tested automation connecting the Enterprise Operations Hub SharePoint data layer with Power Automate.
 
 The project now has a working automated process rather than only a manually configured SharePoint list.
+
+### Concept Learned — Software Architecture Layers vs. OSI Layers
+
+While beginning the Power Apps portion of the project, I clarified the difference between software architecture layers and the OSI networking model.
+
+In the Enterprise Operations Hub V1:
+
+- **Power Apps** acts as the front-end / presentation layer. It provides the interface employees use to submit and interact with requests.
+- **SharePoint Online** currently acts as the back-end data layer. The Access Requests list stores the request records.
+- **Power Automate** provides workflow and business logic, such as generating Request IDs, changing request status, routing approvals, and sending notifications.
+
+A simplified view is:
+
+`Power Apps → SharePoint → Power Automate`
+
+This use of the term "layer" should not be confused with the OSI networking model.
+
+For example, SharePoint being the application's data layer does **not** mean it is OSI Layer 2. OSI Layer 2 is the Data Link layer and deals with technologies and concepts such as Ethernet frames, MAC addresses, switches, and VLANs.
+
+Similarly, describing Power Apps as the application's presentation/front-end layer does not assign it an OSI layer number.
+
+### Key Takeaway
+
+The same terminology can have different meanings depending on context.
+
+**Software architecture:** Front end → Back end/Data → Business Logic
+
+**OSI networking:** Application → Presentation → Session → Transport → Network → Data Link → Physical
+
+Understanding which architectural model is being discussed prevents confusing application development concepts with networking concepts.
+
+## September 13, 2026 — Power Apps V1 Development Started
+
+Created the initial Power Apps application for the Enterprise Operations Hub and connected it to the SharePoint `Access Requests` list.
+
+### Completed
+
+- Created the Power App `Enterprise Operations Hub - Access Requests`.
+- Connected the app to the SharePoint `Access Requests` data source.
+- Verified existing SharePoint request records load into the app.
+- Reviewed the generated `RecordsGallery1` gallery.
+- Confirmed `Form1` uses `RecordsGallery1.Selected` as its Item property.
+- Reviewed the form's New, Edit, and View modes.
+- Reviewed the generated Power Fx logic used by the New Request control.
+- Verified that selecting `+ New` successfully opens `Form1` in New mode.
+- Identified that the generated form currently exposes both employee-facing and administrative/workflow fields.
+
+### Key Concepts Learned
+
+- SharePoint acts as the application's data layer while Power Apps provides the user-facing application interface.
+- Galleries display collections of records.
+- `RecordsGallery1.Selected` represents the currently selected SharePoint record.
+- Forms can dynamically switch between `FormMode.New`, `FormMode.Edit`, and `FormMode.View`.
+- Power Fx variables such as `newMode` and `editMode` can control application state.
+- `NewForm(Form1)` prepares the form to create a new SharePoint record.
+- `UpdateContext({ newMode: true })` changes local application state.
+
+### Current Checkpoint
+
+The generated New Access Request form is functional but has not yet been customized.
+
+Next session: determine which fields should be employee-editable versus system/workflow-controlled, then customize the New Request experience accordingly.
+
+## September 13, 2026 — First End-to-End Access Request Submission
+
+### Milestone
+
+Completed the first successful end-to-end submission through the Enterprise Operations Hub Power Apps interface.
+
+### Work Completed
+
+- Configured the employee-facing Access Request form.
+- Automatically populated the Requester with the currently signed-in user.
+- Corrected SharePoint Person fields to display the user's friendly display name instead of the raw Claims value.
+- Verified Request Type and Requested Permission choice fields.
+- Confirmed required and optional field behavior.
+- Configured new requests to receive a default Status of `Draft`.
+- Successfully submitted a new request from Power Apps to the SharePoint `Access Requests` list.
+- Verified that the existing Power Automate flow automatically generated the Request ID.
+
+### Successful Test
+
+Test request:
+
+`Test - Operations Site Access`
+
+Generated Request ID:
+
+`AR-00004`
+
+### Verified V1 Data Flow
+
+Power Apps → SharePoint Online → Power Automate → Request ID generation
+
+### Result
+
+The project now has a functioning request intake process. An employee can create an access request through the Power Apps interface, the request is stored in SharePoint, and Power Automate assigns the request a standardized tracking ID.
+
+### Next Phase
+
+Build the approval workflow so submitted access requests can move from request intake into manager/authorized approver review.

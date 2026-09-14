@@ -453,3 +453,305 @@ A Power Automate flow can pass initial configuration but still fail at runtime i
 Runtime testing is necessary to validate expressions and connector behavior.
 
 Also, SharePoint-triggered cloud flows may have a short delay before processing newly created items.
+
+Yes. This is exactly the kind of problem that belongs in the **DEBUGGING_JOURNAL.md**, because we had a real issue, tried multiple approaches, identified the cause, and got a working solution.
+
+I'd make this **Issue 003**. Add this to `DEBUGGING_JOURNAL.md`:
+
+````markdown
+## Issue 003 — Power Apps Requester Field Did Not Auto-Populate Current User
+
+### Date
+
+September 13, 2026
+
+### Component
+
+Power Apps / SharePoint Online
+
+### Problem
+
+The `Requester` field in the Access Requests Power Apps form needed to automatically identify the currently signed-in Microsoft 365 user when a new request was created.
+
+The SharePoint `Requester` column is a Person column connected to the `Access Requests` list.
+
+The generated Power Apps Combo Box was:
+
+`DataCardValue3`
+
+Its Items property was:
+
+```powerfx
+Choices([@'Access Requests'].'Requester')
+```
+````
+
+However, when clicking **+ New**, the Requester field remained blank and displayed:
+
+`Find items`
+
+---
+
+### First Attempt — Lookup by Email
+
+The initial approach attempted to locate the current user inside the SharePoint Person choices using:
+
+```powerfx
+If(
+    Form1.Mode = FormMode.New,
+    LookUp(
+        Choices([@'Access Requests'].'Requester'),
+        Email = User().Email
+    ),
+    Parent.Default
+)
+```
+
+The formula was syntactically valid, but the Requester field remained blank when creating a new request.
+
+---
+
+### Second Attempt — Lookup by Display Name
+
+The next test attempted to match the current Power Apps user using:
+
+```powerfx
+LookUp(
+    Choices([@'Access Requests'].'Requester'),
+    DisplayName = User().FullName
+)
+```
+
+The formula was accepted by Power Apps, but the Requester field still did not automatically populate.
+
+---
+
+### Third Attempt — Lookup by SharePoint Claims Identity
+
+Existing SharePoint Person values revealed that SharePoint was representing the user with a Claims identity similar to:
+
+```text
+i:0#.f|membership|user@tenant.onmicrosoft.com
+```
+
+The lookup was changed to:
+
+```powerfx
+If(
+    Form1.Mode = FormMode.New,
+    LookUp(
+        Choices([@'Access Requests'].'Requester'),
+        Lower(Claims) = "i:0#.f|membership|" & Lower(User().Email)
+    ),
+    Parent.Default
+)
+```
+
+The formula was accepted, but the Requester field still did not populate.
+
+---
+
+### Root Cause
+
+Searching the values returned by the SharePoint Person `Choices()` function was not reliably returning the currently authenticated user for the Combo Box default.
+
+Power Apps already knows the authenticated user through the `User()` function, so searching the SharePoint choices was unnecessary.
+
+---
+
+### Final Solution
+
+Instead of searching for the current user, a SharePoint-compatible Person record was constructed directly from the authenticated Power Apps user.
+
+The `DefaultSelectedItems` property of `DataCardValue3` was changed to:
+
+```powerfx
+If(
+    Form1.Mode = FormMode.New,
+    {
+        '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+        Claims: "i:0#.f|membership|" & Lower(User().Email),
+        DisplayName: User().FullName,
+        Email: User().Email,
+        Department: "",
+        JobTitle: "",
+        Picture: ""
+    },
+    Parent.Default
+)
+```
+
+This successfully populated the Requester field when **+ New** was selected.
+
+The `Parent.Default` branch preserves the Requester stored in SharePoint when viewing or editing an existing request.
+
+---
+
+### Display Issue
+
+After the Requester began populating correctly, Power Apps displayed the raw SharePoint Claims identity instead of the user's friendly name.
+
+Example:
+
+```text
+i:0#.f|membership|user@tenant.onmicrosoft.com
+```
+
+The Combo Box `DisplayFields` property was:
+
+```powerfx
+["Claims"]
+```
+
+It was changed to:
+
+```powerfx
+["DisplayName"]
+```
+
+The Requester field then correctly displayed the user's friendly name.
+
+---
+
+### Final Result
+
+When an authenticated employee clicks **+ New**:
+
+- Power Apps identifies the currently signed-in user.
+- The Requester field automatically populates.
+- The user sees their friendly display name.
+- The SharePoint-compatible Person record is retained for submission.
+- Existing records preserve their original Requester value.
+
+---
+
+### Lesson Learned
+
+SharePoint Person columns use structured user records rather than simple text values.
+
+When Power Apps already knows the authenticated user, constructing the required SharePoint Person record directly can be more reliable than attempting to search the values returned by `Choices()`.
+
+Also, `DisplayFields` controls which part of a Person record is shown to the user. A valid Person record can therefore be stored correctly while still displaying an undesirable technical value such as `Claims`.
+
+### Portfolio / Interview Relevance
+
+This issue demonstrates troubleshooting across:
+
+- Power Apps
+- Power Fx
+- SharePoint Person columns
+- Microsoft 365 authenticated identity
+- SharePoint Claims identities
+- Structured record data types
+- UI presentation versus stored data
+- New-record versus existing-record behavior
+
+```
+
+This is a **strong debugging entry** because it doesn't just say “Requester wasn't working.” It documents the failed approaches, why we changed direction, the final solution, and what you learned.
+
+And we should keep the tenant-specific email out of the journal since this is going into your public GitHub portfolio; using `user@tenant.onmicrosoft.com` documents the concept without exposing your actual tenant information.
+```
+
+Good. We'll document the **bug first**, since that was a real troubleshooting issue and is valuable portfolio material.
+
+### Debugging Journal — Issue 004
+
+Open your project in VS Code and open:
+
+```text
+DEBUGGING_JOURNAL.md
+```
+
+Go to the bottom and add this entire entry:
+
+````markdown
+## Issue 004 — Power Apps Form Submission Failed Because Status Was Required
+
+### Date
+
+September 13, 2026
+
+### Component
+
+Power Apps / SharePoint Online
+
+### Problem
+
+The Access Request Power App would not submit a new request.
+
+When the user clicked the submit checkmark, Power Apps displayed:
+
+> Cannot save. Please check if there are errors in the form.
+
+The visible employee-facing fields were completed correctly, so the cause was not immediately apparent.
+
+### Investigation
+
+The Power Apps form's `OnFailure` behavior confirmed that the form submission was failing.
+
+Further inspection revealed the specific validation error:
+
+> Field 'Status' is required.
+
+The SharePoint `Status` column was configured as a required field, but the Status field had previously been removed from the employee-facing Power Apps form because workflow/system-managed fields should not normally be entered manually by employees.
+
+As a result, Power Apps attempted to create the SharePoint item without supplying the required Status value.
+
+### Root Cause
+
+SharePoint required a value for the `Status` column, but the Power Apps form was not submitting one.
+
+The SharePoint default value alone was not sufficient for this Power Apps form submission scenario.
+
+### Resolution
+
+The Status field was temporarily added back to the Power Apps form so its behavior could be inspected.
+
+The Status ComboBox was configured so that new requests automatically receive the value:
+
+```powerfx
+If(
+    Form1.Mode = FormMode.New,
+    {Value: "Draft"},
+    Parent.Default
+)
+```
+````
+
+The ComboBox `Items` property remained:
+
+```powerfx
+Choices([@'Access Requests'].'Status')
+```
+
+This allows new requests to start automatically with a Status of `Draft` while existing records continue to use their stored SharePoint Status value.
+
+### Verification
+
+A new request named:
+
+`Test - Operations Site Access`
+
+was submitted successfully through Power Apps.
+
+The request was created in the SharePoint `Access Requests` list.
+
+Power Automate then successfully generated:
+
+`AR-00004`
+
+This confirmed the working path:
+
+Power Apps → SharePoint Online → Power Automate → Request ID generation
+
+### Lesson Learned
+
+When a SharePoint column is required, a Power Apps form must supply a valid value during submission even when the field is intended to be system-managed.
+
+System-managed fields can be hidden from the final employee interface, but their required values still need to be supplied through application or automation logic.
+
+```
+
+
+```
