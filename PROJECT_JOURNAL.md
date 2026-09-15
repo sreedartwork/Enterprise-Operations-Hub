@@ -619,3 +619,112 @@ The project now has a functioning request intake process. An employee can create
 ### Next Phase
 
 Build the approval workflow so submitted access requests can move from request intake into manager/authorized approver review.
+
+---
+
+## September 14, 2026 — Approval Workflow Completed and Tested
+
+### Objective
+
+Build and validate the approval stage of the SharePoint Access Request process so that submitted requests can be reviewed by an authorized approver and automatically updated based on the approver's decision.
+
+### Power Automate Approval Workflow
+
+Created and configured the Power Automate flow:
+
+`Access Request - Approval Workflow`
+
+The workflow now follows this process:
+
+Power Apps → SharePoint Access Requests List → Power Automate → Approval Request → Approver Decision → Condition → SharePoint Update
+
+### Approval Process
+
+The flow performs the following actions:
+
+1. Detects when a new Access Request item is created in SharePoint.
+2. Initializes the workflow fields for the request.
+3. Sends an approval request using **Start and wait for an approval**.
+4. Waits for the authorized approver to select **Approve** or **Reject**.
+5. Evaluates the approval **Outcome** using a Power Automate Condition.
+6. Routes the request through the appropriate True or False branch.
+7. Updates the original SharePoint list item with the approval results.
+
+### Approved Branch
+
+Condition:
+
+`Outcome = Approve`
+
+When the condition is True, Power Automate updates the request with:
+
+- Status: Approved
+- Approval Decision: Approved
+- Approver: Approval responder
+- Approval Comments: Comments entered by the approver
+- Approval Date: Approval response date
+
+The approved branch was successfully tested end-to-end.
+
+Test request:
+
+`Approval Test - Approved Path`
+
+The SharePoint Access Requests list correctly recorded the approval decision, approver, comments, and approval date.
+
+### Rejected Branch
+
+When the approval Outcome is not Approve, the Condition follows the False branch.
+
+Power Automate updates the request with:
+
+- Status: Rejected
+- Approval Decision: Rejected
+- Approver: Approval responder
+- Approval Comments: Comments entered by the approver
+- Approval Date: Approval response date
+
+The rejected branch was successfully tested end-to-end.
+
+Test request:
+
+`Approval Test - Rejected Path`
+
+Approval comment used during testing:
+
+`Rejected for workflow testing.`
+
+The SharePoint Access Requests list correctly recorded the rejected status, approver, decision, comments, and approval date.
+
+### Verified Approval Data Flow
+
+Power Apps
+→ SharePoint Online
+→ Power Automate
+→ Microsoft Approvals
+→ Human Approver
+→ Power Automate Condition
+→ Approved / Rejected Branch
+→ SharePoint Online
+
+### Key Architecture Concept
+
+Approval and fulfillment are intentionally separated.
+
+**Approval** determines whether the requested access is authorized.
+
+**Fulfillment** is the administrative action that actually grants, changes, or removes the requested SharePoint permissions.
+
+This separation reflects an enterprise access-management process and provides a clearer audit trail between authorization and administrative execution.
+
+### Result
+
+The Enterprise Operations Hub now has a functioning request intake and approval process.
+
+An employee can submit a SharePoint access request through Power Apps, the request is stored in SharePoint, a Request ID is generated, an approval is sent to an authorized approver, and the final approval decision is automatically written back to the SharePoint request record.
+
+Both the **Approved** and **Rejected** workflow paths have been successfully tested.
+
+### Next Phase
+
+Build the fulfillment stage for approved requests so that an administrator can process the authorized SharePoint access change and record the fulfillment details.
