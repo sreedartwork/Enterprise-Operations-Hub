@@ -728,3 +728,91 @@ Both the **Approved** and **Rejected** workflow paths have been successfully tes
 ### Next Phase
 
 Build the fulfillment stage for approved requests so that an administrator can process the authorized SharePoint access change and record the fulfillment details.
+
+Good. At the **very bottom of `PROJECT_JOURNAL.md`**, add this entry. This captures what we actually accomplished today without claiming anything we haven't built yet:
+
+````markdown
+---
+
+## September 16, 2026 — My Requests View and Published App Validation
+
+### Objective
+
+Continue improving the employee-facing Power Apps experience by separating the user's personal requests from the broader request-management view and validating the behavior in the published application.
+
+### My Requests Mode
+
+Added application mode logic using the `varAppMode` variable.
+
+The application can now distinguish between:
+
+- `myrequests` — employee-facing view
+- `allrequests` — broader administrative/request-management view
+
+The application startup configuration was tested by temporarily switching between the two modes.
+
+The final default mode was restored to:
+
+```powerfx
+Set(varAppMode, "myrequests")
+```
+````
+
+### Request Filtering
+
+Updated the Access Requests gallery so that when the application is running in `myrequests` mode, the gallery filters records based on the currently signed-in user's email address.
+
+This allows an employee to see requests associated with their own account instead of automatically exposing every request in the SharePoint list.
+
+The gallery continues to support text searching by request title.
+
+### Delegation Warning
+
+Power Apps initially displayed delegation warnings related to the `Search()` portions of the gallery formula.
+
+The formula was adjusted and the warnings were cleared during development.
+
+This troubleshooting reinforced the importance of considering delegation when designing Power Apps that may eventually operate against larger enterprise data sets.
+
+### Person Field Display Fix
+
+During live-app testing, the SharePoint Person fields for **Requester** and **Target User** initially displayed the underlying SharePoint claims identity format:
+
+`i:0#.f|membership|user@domain`
+
+instead of the user's friendly display name.
+
+The Person-field display configuration was corrected so that the application displays the user's `DisplayName`.
+
+Verified in the published application:
+
+- Requester displays as `Sean Reed`
+- Target User displays as `Sean Reed`
+- Gallery requester information displays as `Sean Reed`
+- Raw SharePoint claims strings are no longer displayed to the end user
+
+### Published Application Validation
+
+Saved and published the updated Power Apps canvas application.
+
+The live application initially continued displaying the previous version while the newly published version propagated.
+
+After the new version became available and the application reloaded, the updated Person-field display behavior was verified successfully in the live application.
+
+### Result
+
+The employee-facing application now has the foundation for a dedicated **My Requests** experience.
+
+The application can distinguish between employee and broader request-management modes, filter the request gallery for the signed-in user, and display SharePoint Person fields using readable names instead of internal claims identifiers.
+
+### Next Phase
+
+Continue refining the My Requests experience and then build the fulfillment stage of the request lifecycle:
+
+`Approved → In Progress → Completed`
+
+The fulfillment stage will remain separate from approval so that authorization and administrative execution maintain distinct audit records.
+
+```
+
+```
