@@ -918,3 +918,96 @@ Continued final V1 hardening of the Enterprise Operations Hub Power Apps fulfill
 ### V1 Status
 
 V1 is now in final validation and presentation cleanup. Remaining work includes final persistence testing, requester/admin mode finalization, publishing, documentation cleanup, screenshots, and final V1 repository updates.
+
+## September 21, 2026 — Role-Aware Navigation and Final V1 Validation
+
+### Objective
+
+Complete final V1 validation of the requester and administrator experiences in the Enterprise Operations Hub Power App.
+
+### Work Completed
+
+- Added role-aware application startup behavior using Microsoft 365 group membership.
+- Configured the application to default to the `myrequests` experience when it starts.
+- Added an administrator authorization check using the Office 365 Groups connector.
+- Verified the signed-in user's email against members of the designated administrator group.
+- Configured the Admin View button so it is displayed only when the current user passes the administrator group check.
+- Validated navigation between My Requests and Admin View.
+- Confirmed My Requests displays requests belonging to the signed-in requester.
+- Confirmed Admin View displays requests in the Approved, In Progress, and Completed fulfillment stages.
+- Verified administrative fulfillment fields remain hidden from the normal requester experience.
+- Verified Status remains visible to requesters but is read-only.
+- Re-tested date-only fields and confirmed saved fulfillment and completion dates persist correctly.
+- Confirmed Assigned Administrator displays the administrator's friendly display name instead of the SharePoint claims value.
+- Performed fresh application startup testing after running `App.OnStart`.
+
+### Role-Aware Startup Logic
+
+The application initializes in requester mode and determines administrator access using Microsoft 365 group membership.
+
+```powerfx
+Set(varAppMode, "myrequests");
+
+Set(
+    varIsAdmin,
+    !IsBlank(
+        LookUp(
+            Office365Groups.ListGroupMembers(
+                "4ca05468-5622-4647-9108-271e7aafa7a0"
+            ).value,
+            Lower(mail) = Lower(User().Email)
+        )
+    )
+)
+```
+
+The Admin View button uses:
+
+```powerfx
+varIsAdmin
+```
+
+This prevents the administrative navigation option from being presented to users who do not pass the administrator group-membership check.
+
+### Validation Result
+
+Fresh application startup testing completed successfully.
+
+The application:
+
+1. Opens in My Requests mode.
+2. Displays the signed-in requester's requests.
+3. Determines administrator eligibility through Microsoft 365 group membership.
+4. Displays Admin View for an authorized administrator.
+5. Allows the administrator to switch into the controlled fulfillment experience.
+6. Keeps administrative fulfillment controls out of the normal requester experience.
+
+### Security Note
+
+The current role-aware controls provide application-level user experience protection. They should not be treated as a replacement for SharePoint data-layer authorization.
+
+A user with sufficient direct permissions to the underlying SharePoint list could potentially interact with data outside of the Power Apps interface.
+
+Stronger data-layer enforcement can be introduced in later versions through SharePoint permission architecture, Dataverse security roles, Microsoft Entra ID, Microsoft Graph, and other governance controls.
+
+### V1 Status
+
+Enterprise Operations Hub V1 is now in final release preparation.
+
+Core V1 functionality has been validated:
+
+- Request submission
+- Automatic Request ID generation
+- Approval and rejection workflow
+- Requester-specific My Requests experience
+- Role-aware administrator navigation
+- Approved → In Progress → Completed fulfillment lifecycle
+- Administrator assignment
+- Fulfillment documentation
+- Date persistence
+- Friendly Person-field display
+- Requester/admin interface separation
+
+### Next Step
+
+Save and publish the validated Power Apps version, perform the final end-to-end V1 test, and prepare the project for its V1 portfolio release.

@@ -5,11 +5,17 @@ This journal documents technical problems encountered while building the Enterpr
 Each entry should explain:
 
 - What was being attempted
+
 - What went wrong
+
 - What the error meant
+
 - How the problem was investigated
+
 - How it was resolved
+
 - How the solution was verified
+
 - What was learned
 
 The goal is not only to document successful development, but also to demonstrate a repeatable troubleshooting process.
@@ -25,9 +31,13 @@ September 2026
 ### Environment
 
 - macOS
+
 - Visual Studio Code
+
 - zsh shell
+
 - Git
+
 - External Crucial X9 drive
 
 ---
@@ -39,13 +49,17 @@ Open the Enterprise Operations Hub project in Visual Studio Code directly from T
 Project directory:
 
 ```text
+
 /Volumes/Crucial X9/Enterprise-Operations-Hub
+
 ```
 
 The intended command was:
 
 ```bash
+
 code .
+
 ```
 
 ---
@@ -55,7 +69,9 @@ code .
 When the command was entered, Terminal returned:
 
 ```text
+
 zsh: command not found: code
+
 ```
 
 The project directory existed and Visual Studio Code was installed, but the terminal could not recognize the `code` command.
@@ -75,15 +91,21 @@ In plain English:
 Terminal understood commands such as:
 
 ```bash
+
 cd
+
 git
+
 mkdir
+
 ```
 
 but it did not yet know what:
 
 ```bash
+
 code
+
 ```
 
 referred to.
@@ -99,7 +121,9 @@ It contains locations where the shell looks for executable commands.
 When a command such as:
 
 ```bash
+
 code .
+
 ```
 
 is entered, the shell searches the directories contained in `PATH` for an executable named `code`.
@@ -107,7 +131,9 @@ is entered, the shell searches the directories contained in `PATH` for an execut
 If it cannot locate one, the shell returns:
 
 ```text
+
 command not found
+
 ```
 
 ---
@@ -123,7 +149,9 @@ The VS Code Command Palette provides an option for installing its shell command.
 The following command was selected from the Command Palette:
 
 ```text
+
 Shell Command: Install 'code' command in PATH
+
 ```
 
 ---
@@ -133,7 +161,9 @@ Shell Command: Install 'code' command in PATH
 During installation, macOS displayed an authorization request involving:
 
 ```text
+
 osascript
+
 ```
 
 `osascript` is a built-in macOS command used to execute AppleScript or other Open Scripting Architecture scripts.
@@ -151,7 +181,9 @@ The Visual Studio Code shell command was installed into the PATH.
 After installation, the project could be opened from its directory using:
 
 ```bash
+
 code .
+
 ```
 
 ---
@@ -161,7 +193,9 @@ code .
 Visual Studio Code successfully opened the:
 
 ```text
+
 Enterprise-Operations-Hub
+
 ```
 
 project directory.
@@ -183,8 +217,11 @@ A `command not found` error does not automatically mean that the underlying appl
 The troubleshooting process should determine whether:
 
 1. The application is installed.
+
 2. The executable exists.
+
 3. The shell knows where to locate the executable.
+
 4. The appropriate directory is included in `PATH`.
 
 This distinction is useful when troubleshooting command-line tools on macOS, Linux, and other Unix-like systems.
@@ -200,8 +237,11 @@ September 2026
 ### Environment
 
 - macOS
+
 - Git
+
 - External Crucial X9 drive
+
 - Visual Studio Code
 
 ---
@@ -219,13 +259,17 @@ After creating the repository and project files on the external drive, macOS-gen
 Some files used names beginning with:
 
 ```text
+
 ._
+
 ```
 
 macOS can also create:
 
 ```text
+
 .DS_Store
+
 ```
 
 files.
@@ -241,9 +285,13 @@ If these files are not excluded, Git may track them.
 That can create:
 
 - Unnecessary repository changes
+
 - Clutter in Git status
+
 - Unrelated files in commits
+
 - Confusing differences between computers
+
 - A less professional repository
 
 ---
@@ -253,7 +301,9 @@ That can create:
 Git status was checked using:
 
 ```bash
+
 git status
+
 ```
 
 The metadata files were identified as files that should not be included in source control.
@@ -267,8 +317,11 @@ A `.gitignore` file was created in the project root.
 The following patterns were added:
 
 ```text
+
 .DS_Store
+
 ._*
+
 ```
 
 ---
@@ -280,7 +333,9 @@ A `.gitignore` file tells Git which files or file patterns should not be tracked
 For example:
 
 ```text
+
 .DS_Store
+
 ```
 
 tells Git to ignore macOS `.DS_Store` files.
@@ -288,7 +343,9 @@ tells Git to ignore macOS `.DS_Store` files.
 The pattern:
 
 ```text
+
 ._*
+
 ```
 
 tells Git to ignore files whose names begin with `._`.
@@ -300,7 +357,9 @@ tells Git to ignore files whose names begin with `._`.
 After creating the `.gitignore`, the repository status was checked again using:
 
 ```bash
+
 git status
+
 ```
 
 The unwanted macOS metadata files were no longer listed as untracked project files.
@@ -396,6 +455,7 @@ Automatically generate a human-readable Request ID after a new Access Request is
 Example:
 
 - SharePoint Item ID: `3`
+
 - Generated Request ID: `AR-00003`
 
 ### Problem
@@ -423,9 +483,13 @@ Because the expression could not be evaluated, the Update item action failed and
 Replaced the unsupported `padLeft()` logic with an expression using supported string functions:
 
 - `concat()`
+
 - `substring()`
+
 - `string()`
+
 - `length()`
+
 - `sub()`
 
 The new expression adds leading zeros to the SharePoint item ID and prefixes the result with `AR-`.
@@ -439,7 +503,9 @@ Created a new SharePoint access request:
 The flow executed successfully:
 
 1. `When an item is created` — Succeeded
+
 2. `Update item` — Succeeded
+
 3. SharePoint Request ID was automatically updated to `AR-00003`
 
 ### Additional Observation
@@ -459,7 +525,7 @@ Yes. This is exactly the kind of problem that belongs in the **DEBUGGING_JOURNAL
 I'd make this **Issue 003**. Add this to `DEBUGGING_JOURNAL.md`:
 
 ````markdown
-## Issue 003 — Power Apps Requester Field Did Not Auto-Populate Current User
+## Issue 004 — Power Apps Requester Field Did Not Auto-Populate Current User
 
 ### Date
 
@@ -482,7 +548,9 @@ The generated Power Apps Combo Box was:
 Its Items property was:
 
 ```powerfx
+
 Choices([@'Access Requests'].'Requester')
+
 ```
 ````
 
@@ -497,14 +565,23 @@ However, when clicking **+ New**, the Requester field remained blank and display
 The initial approach attempted to locate the current user inside the SharePoint Person choices using:
 
 ```powerfx
+
 If(
-    Form1.Mode = FormMode.New,
-    LookUp(
-        Choices([@'Access Requests'].'Requester'),
-        Email = User().Email
-    ),
-    Parent.Default
+
+Form1.Mode = FormMode.New,
+
+LookUp(
+
+    Choices([@'Access Requests'].'Requester'),
+
+    Email = User().Email
+
+),
+
+Parent.Default
+
 )
+
 ```
 
 The formula was syntactically valid, but the Requester field remained blank when creating a new request.
@@ -516,10 +593,15 @@ The formula was syntactically valid, but the Requester field remained blank when
 The next test attempted to match the current Power Apps user using:
 
 ```powerfx
+
 LookUp(
-    Choices([@'Access Requests'].'Requester'),
-    DisplayName = User().FullName
+
+Choices([@'Access Requests'].'Requester'),
+
+DisplayName = User().FullName
+
 )
+
 ```
 
 The formula was accepted by Power Apps, but the Requester field still did not automatically populate.
@@ -531,20 +613,31 @@ The formula was accepted by Power Apps, but the Requester field still did not au
 Existing SharePoint Person values revealed that SharePoint was representing the user with a Claims identity similar to:
 
 ```text
+
 i:0#.f|membership|user@tenant.onmicrosoft.com
+
 ```
 
 The lookup was changed to:
 
 ```powerfx
+
 If(
-    Form1.Mode = FormMode.New,
-    LookUp(
-        Choices([@'Access Requests'].'Requester'),
-        Lower(Claims) = "i:0#.f|membership|" & Lower(User().Email)
-    ),
-    Parent.Default
+
+Form1.Mode = FormMode.New,
+
+LookUp(
+
+    Choices([@'Access Requests'].'Requester'),
+
+    Lower(Claims) = "i:0#.f|membership|" & Lower(User().Email)
+
+),
+
+Parent.Default
+
 )
+
 ```
 
 The formula was accepted, but the Requester field still did not populate.
@@ -566,19 +659,33 @@ Instead of searching for the current user, a SharePoint-compatible Person record
 The `DefaultSelectedItems` property of `DataCardValue3` was changed to:
 
 ```powerfx
+
 If(
-    Form1.Mode = FormMode.New,
-    {
-        '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
-        Claims: "i:0#.f|membership|" & Lower(User().Email),
-        DisplayName: User().FullName,
-        Email: User().Email,
-        Department: "",
-        JobTitle: "",
-        Picture: ""
-    },
-    Parent.Default
+
+Form1.Mode = FormMode.New,
+
+{
+
+    '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+
+    Claims: "i:0#.f|membership|" & Lower(User().Email),
+
+    DisplayName: User().FullName,
+
+    Email: User().Email,
+
+    Department: "",
+
+    JobTitle: "",
+
+    Picture: ""
+
+},
+
+Parent.Default
+
 )
+
 ```
 
 This successfully populated the Requester field when **+ New** was selected.
@@ -594,19 +701,25 @@ After the Requester began populating correctly, Power Apps displayed the raw Sha
 Example:
 
 ```text
+
 i:0#.f|membership|user@tenant.onmicrosoft.com
+
 ```
 
 The Combo Box `DisplayFields` property was:
 
 ```powerfx
+
 ["Claims"]
+
 ```
 
 It was changed to:
 
 ```powerfx
+
 ["DisplayName"]
+
 ```
 
 The Requester field then correctly displayed the user's friendly name.
@@ -618,9 +731,13 @@ The Requester field then correctly displayed the user's friendly name.
 When an authenticated employee clicks **+ New**:
 
 - Power Apps identifies the currently signed-in user.
+
 - The Requester field automatically populates.
+
 - The user sees their friendly display name.
+
 - The SharePoint-compatible Person record is retained for submission.
+
 - Existing records preserve their original Requester value.
 
 ---
@@ -638,12 +755,19 @@ Also, `DisplayFields` controls which part of a Person record is shown to the use
 This issue demonstrates troubleshooting across:
 
 - Power Apps
+
 - Power Fx
+
 - SharePoint Person columns
+
 - Microsoft 365 authenticated identity
+
 - SharePoint Claims identities
+
 - Structured record data types
+
 - UI presentation versus stored data
+
 - New-record versus existing-record behavior
 
 ```
@@ -651,6 +775,7 @@ This issue demonstrates troubleshooting across:
 This is a **strong debugging entry** because it doesn't just say “Requester wasn't working.” It documents the failed approaches, why we changed direction, the final solution, and what you learned.
 
 And we should keep the tenant-specific email out of the journal since this is going into your public GitHub portfolio; using `user@tenant.onmicrosoft.com` documents the concept without exposing your actual tenant information.
+
 ```
 
 Good. We'll document the **bug first**, since that was a real troubleshooting issue and is valuable portfolio material.
@@ -660,13 +785,15 @@ Good. We'll document the **bug first**, since that was a real troubleshooting is
 Open your project in VS Code and open:
 
 ```text
+
 DEBUGGING_JOURNAL.md
+
 ```
 
 Go to the bottom and add this entire entry:
 
 ````markdown
-## Issue 004 — Power Apps Form Submission Failed Because Status Was Required
+## Issue 005 — Power Apps Form Submission Failed Because Status Was Required
 
 ### Date
 
@@ -711,18 +838,26 @@ The Status field was temporarily added back to the Power Apps form so its behavi
 The Status ComboBox was configured so that new requests automatically receive the value:
 
 ```powerfx
+
 If(
-    Form1.Mode = FormMode.New,
-    {Value: "Draft"},
-    Parent.Default
+
+Form1.Mode = FormMode.New,
+
+{Value: "Draft"},
+
+Parent.Default
+
 )
+
 ```
 ````
 
 The ComboBox `Items` property remained:
 
 ```powerfx
+
 Choices([@'Access Requests'].'Status')
+
 ```
 
 This allows new requests to start automatically with a Status of `Draft` while existing records continue to use their stored SharePoint Status value.
@@ -754,4 +889,261 @@ System-managed fields can be hidden from the final employee interface, but their
 ```
 
 
+
 ```
+
+## Issue 006 — Power Apps Person Field Displayed SharePoint Claims Instead of Display Name
+
+### Problem
+
+The Assigned Administrator field in the Power Apps fulfillment interface displayed the raw SharePoint claims value instead of the administrator's friendly display name.
+
+Example:
+
+```text
+
+i:0#.f|membership|sean@urbanassessory.onmicrosoft.com
+
+```
+
+This made the administrative interface difficult to read and was not appropriate for a production-style user experience.
+
+### Investigation
+
+The Assigned Administrator control was identified as:
+
+```text
+
+DataCardValue11
+
+```
+
+The ComboBox was correctly retrieving available SharePoint Person values using:
+
+```powerfx
+
+Choices([@'Access Requests'].'AssignedAdministrator')
+
+```
+
+The control also preserved the existing SharePoint Person record using:
+
+```powerfx
+
+DefaultSelectedItems = Parent.Default
+
+```
+
+However, the ComboBox display and search configuration were not using the person's friendly display name.
+
+### Root Cause
+
+SharePoint Person columns return complex user records rather than simple text values.
+
+The ComboBox was displaying and searching the wrong property from that Person record, causing the SharePoint claims identity to appear instead of the user's friendly name.
+
+### Resolution
+
+The ComboBox was configured to display and search using the `DisplayName` property while preserving the complete Person record required by SharePoint.
+
+Final configuration:
+
+```powerfx
+
+DisplayFields = ["DisplayName"]
+
+SearchFields = ["DisplayName"]
+
+DefaultSelectedItems = Parent.Default
+
+DisplayMode = Parent.DisplayMode
+
+```
+
+The existing Items configuration remained:
+
+```powerfx
+
+Choices([@'Access Requests'].'AssignedAdministrator')
+
+```
+
+### Validation
+
+The application was tested in Edit and View modes.
+
+- Assigned Administrator displayed `Sean Reed`.
+
+- The raw SharePoint claims value was no longer displayed.
+
+- Administrator selection continued to work.
+
+- The form saved successfully.
+
+- The selected administrator persisted after the record was reloaded.
+
+- SharePoint continued receiving the complete Person record.
+
+### Lesson Learned
+
+SharePoint Person fields should be treated as complex records rather than plain text.
+
+When using a Person field in a Power Apps ComboBox, the application can preserve the complete SharePoint Person object for saving while using properties such as `DisplayName` for the user-facing interface.
+
+This provides a cleaner user experience without breaking the underlying SharePoint Person field integration.
+
+## Issue 007 — Administrative Fields Appeared Missing Because App State Was Not Initialized
+
+### Problem
+
+During final V1 interface testing, the administrative fulfillment fields appeared to be missing from the Power Apps form.
+
+The affected fields included:
+
+- Assigned Administrator
+
+- Fulfillment Date
+
+- Fulfillment Notes
+
+- Completed Date
+
+Because these fields were positioned near the bottom of the form, the initial investigation focused on whether the form height, card positioning, or container layout was preventing the fields from being displayed.
+
+### Investigation
+
+The form and surrounding layout were inspected, including:
+
+- Form height
+
+- DataCard height
+
+- DataCard grid position
+
+- Container padding
+
+- Form column configuration
+
+- Visibility properties
+
+The DataCards still existed and their layout properties were valid.
+
+The administrative cards used conditional visibility based on the current application mode.
+
+Example:
+
+```powerfx
+
+varAppMode = "admin"
+
+```
+
+The application mode was controlled by the global variable:
+
+```powerfx
+
+varAppMode
+
+```
+
+Testing showed that the expected application state had not been initialized in the current Power Apps Studio session.
+
+### Root Cause
+
+The administrative fields were not missing or clipped by the form.
+
+The `varAppMode` global variable had not been initialized to the expected runtime state.
+
+Because the administrative DataCards depended on `varAppMode` for visibility, they remained hidden even though their layout and form configuration were correct.
+
+### Resolution
+
+`App.OnStart` was executed to initialize the application's global variables.
+
+The application startup logic initializes requester mode and evaluates administrator membership:
+
+```powerfx
+
+Set(varAppMode, "myrequests");
+
+Set(
+
+varIsAdmin,
+
+!IsBlank(
+
+    LookUp(
+
+        Office365Groups.ListGroupMembers(
+
+            "4ca05468-5622-4647-9108-271e7aafa7a0"
+
+        ).value,
+
+        Lower(mail) = Lower(User().Email)
+
+    )
+
+)
+
+)
+
+```
+
+After running `App.OnStart`, the application state initialized correctly.
+
+Selecting Admin View then changed:
+
+```powerfx
+
+varAppMode
+
+```
+
+to:
+
+```text
+
+admin
+
+```
+
+and the administrative fulfillment fields appeared as expected.
+
+### Validation
+
+After initializing the application and entering Admin View:
+
+- Administrative fulfillment fields displayed correctly.
+
+- The form did not require structural changes.
+
+- Existing DataCard positioning remained intact.
+
+- Requester mode continued hiding administrative fields.
+
+- Admin View continued exposing the fulfillment interface.
+
+- No SharePoint columns or additional spacer controls were required.
+
+### Lesson Learned
+
+When Power Apps controls use conditional visibility, verify application variables and runtime state before restructuring the user interface.
+
+A control that appears to be missing may simply have a `Visible` formula evaluating to false.
+
+The debugging order should therefore include:
+
+1. Verify the control still exists.
+
+2. Inspect its `Visible` property.
+
+3. Verify variables used by the visibility formula.
+
+4. Run or validate `App.OnStart`.
+
+5. Confirm the current application mode.
+
+6. Only then investigate layout or structural changes.
+
+This prevented unnecessary modifications to a form whose underlying layout was already functioning correctly.
