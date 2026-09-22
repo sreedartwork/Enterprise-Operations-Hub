@@ -1011,3 +1011,160 @@ Core V1 functionality has been validated:
 ### Next Step
 
 Save and publish the validated Power Apps version, perform the final end-to-end V1 test, and prepare the project for its V1 portfolio release.
+
+Perfect. Paste this **directly at the bottom** of `PROJECT_JOURNAL.md`:
+
+````markdown
+## September 21, 2026 — V1 Published and Live Application Validated
+
+### Objective
+
+Complete final V1 validation of the Enterprise Operations Hub Access Requests application and publish the tested version for portfolio demonstration.
+
+### Final V1 Hardening
+
+Before publication, the administrative fulfillment fields were hardened so they require both an authorized administrator and the Admin View application mode.
+
+The following administrative fields now use:
+
+```powerfx
+varIsAdmin && varAppMode = "admin"
+```
+````
+
+Applied to:
+
+- Assigned Administrator
+- Completed Date
+- Fulfillment Date
+- Fulfillment Notes
+
+This prevents the administrative fulfillment fields from appearing in the requester experience even if the application mode is changed unexpectedly.
+
+Status remains visible to requesters as a read-only workflow field.
+
+### Role-Aware Startup Validation
+
+`App.OnStart` was executed and validated successfully.
+
+The application initializes in requester mode:
+
+```powerfx
+Set(varAppMode, "myrequests");
+```
+
+Administrator authorization is determined through Microsoft 365 group membership using the Office365Groups connector.
+
+The authorized administrator account successfully passed the group-membership check and received access to the Admin View navigation option.
+
+### Requester Experience Validation
+
+The application was tested in My Requests mode before publication.
+
+Validation confirmed:
+
+- My Requests is the default application experience.
+- The requester sees only requests associated with the signed-in account.
+- Status remains visible.
+- Administrative fulfillment fields remain hidden.
+- Admin View is available only when the signed-in account passes the administrator group-membership check.
+
+### Administrator Experience Validation
+
+Admin View was tested successfully before publication.
+
+Validation confirmed:
+
+- Admin View displays the administrator fulfillment record set.
+- Approved, In Progress, and Completed requests can be surfaced for administrative processing.
+- Administrative fulfillment information is visible to the authorized administrator.
+- Assigned Administrator displays a friendly user name instead of SharePoint claims data.
+- Completed Date and Fulfillment Date display as date-only values.
+- Fulfillment Notes remain available as part of the fulfillment audit trail.
+
+### Publication
+
+The tested V1 application was published successfully on September 21, 2026.
+
+Application:
+
+**Enterprise Operations Hub - Access Requests**
+
+A Power Apps description was added describing the application as an enterprise request-management solution built with Power Apps, SharePoint Online, Power Automate, and Microsoft 365 group-based role awareness.
+
+### Published Application Validation
+
+The application was launched through the Power Apps Play experience after publication.
+
+Power Apps initially loaded a cached older version and displayed a notification that a newer version was available. The application was refreshed using the Power Apps refresh control before final testing.
+
+The current published version was then validated successfully.
+
+Published requester-mode validation confirmed:
+
+- My Requests loads as the default experience.
+- Requester records load successfully.
+- Administrative fulfillment fields remain hidden.
+- The authorized administrator account receives the Admin View option.
+
+Published administrator-mode validation confirmed:
+
+- Admin View switches to the administrator record set.
+- Completed fulfillment records load successfully.
+- Status displays correctly.
+- Assigned Administrator displays correctly.
+- Completed Date persists and displays correctly.
+- Fulfillment Date persists and displays correctly.
+- Fulfillment Notes persist and display correctly.
+
+A completed test request displayed the expected fulfillment information in the live published application.
+
+### Security Note
+
+The role-aware Power Apps controls implemented in V1 provide application-level user-interface protection and workflow separation.
+
+They do not replace SharePoint data-layer permissions or enterprise authorization controls.
+
+Future versions can strengthen enforcement through SharePoint permission architecture, Dataverse security roles, Microsoft Graph, PnP PowerShell, Entra ID, and additional governance controls.
+
+### V1 Result
+
+The core V1 workflow is now implemented, published, and validated through the live Power Apps experience:
+
+**Request Submission → Request ID Generation → Approval / Rejection → Administrator Fulfillment → Completion**
+
+V1 demonstrates:
+
+- SharePoint Online request management
+- Power Apps requester and administrator experiences
+- Power Automate approval workflows
+- Microsoft 365 group-aware navigation
+- Controlled manual fulfillment lifecycle
+- Person-field handling
+- Workflow status management
+- Date persistence
+- Fulfillment documentation
+- Role-aware user-interface controls
+- Published application validation
+
+The functional Power Apps portion of V1 is now ready to be frozen while final portfolio documentation, screenshots, README updates, and presentation materials are completed.
+
+### Next Phase
+
+Complete final V1 portfolio packaging:
+
+- Capture portfolio-quality screenshots.
+- Update README with final V1 implementation status.
+- Review architecture and requirements documentation for accuracy.
+- Commit final V1 documentation to GitHub.
+- Prepare the Enterprise Operations Hub portfolio presentation.
+- Freeze V1 before beginning V2 operational enhancements.
+
+````
+
+Then press **⌘S**.
+
+Immediately verify that it really wrote to the Crucial X9 by running:
+
+```
+````
