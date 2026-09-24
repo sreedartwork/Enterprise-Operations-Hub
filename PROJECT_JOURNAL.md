@@ -30,58 +30,6 @@ This use case was selected because it represents a realistic enterprise IT proce
 
 The initial V1 architecture was defined as:
 
-`````text
-Employee
-    ↓
-SharePoint Online Portal
-    ↓
-Power Apps
-    ↓
-SharePoint Data
-    ↓
-Power Automate
-    ↓
-Approval Process
-    ↓
-IT / M365 Administration
-
-Good. We're going to make the **first journal entry** cover the foundation work we've already completed. This is different from `environment-setup.md`: we're recording the **story of what we did**, including a couple of problems we encountered.
-
-Copy and paste this entire block into `PROJECT_JOURNAL.md`:
-
-````markdown
-# Enterprise Operations Hub — Project Journal
-
-This journal documents the development of the Enterprise Operations Hub from initial planning through implementation.
-
-Entries record major milestones, technical decisions, configuration work, and lessons learned throughout the project.
-
----
-
-## September 2026 — Project Foundation and Environment Setup
-
-### Project Started
-
-Development began on the **Enterprise Operations Hub**, an enterprise-style Microsoft 365 operations and request-management platform.
-
-The project was created as a career portfolio project designed to combine existing Microsoft 365 and SharePoint administration experience with additional development, automation, identity, security, governance, and reporting technologies.
-
-The first major milestone was defined as:
-
-> **Build a working SharePoint Online + Power Apps + Power Automate request-management workflow from beginning to end.**
-
-The first business process selected for implementation is:
-
-**SharePoint Access / Permission Change Request**
-
-This use case was selected because it represents a realistic enterprise IT process and provides a foundation for later identity governance and automation capabilities.
-
----
-
-### Architecture Direction Established
-
-The initial V1 architecture was defined as:
-
 ```text
 Employee
     ↓
@@ -396,13 +344,6 @@ The first implementation target will be the:
 
 **SharePoint Access / Permission Change Request**
 
-```
-
-Then hit **⌘ + S**.
-
-One small thing worth noticing: we're documenting the `code .` problem here because it was part of the project's history, but later we'll put the **technical troubleshooting details** in `DEBUGGING_JOURNAL.md`. That's the difference between the two journals.
-
-```
 
 ## September 2026 — Access Requests SharePoint List Implemented
 
@@ -729,9 +670,7 @@ Both the **Approved** and **Rejected** workflow paths have been successfully tes
 
 Build the fulfillment stage for approved requests so that an administrator can process the authorized SharePoint access change and record the fulfillment details.
 
-Good. At the **very bottom of `PROJECT_JOURNAL.md`**, add this entry. This captures what we actually accomplished today without claiming anything we haven't built yet:
 
-````markdown
 ---
 
 ## September 16, 2026 — My Requests View and Published App Validation
@@ -756,7 +695,6 @@ The final default mode was restored to:
 ```powerfx
 Set(varAppMode, "myrequests")
 ```
-````
 
 ### Request Filtering
 
@@ -813,9 +751,7 @@ Continue refining the My Requests experience and then build the fulfillment stag
 
 The fulfillment stage will remain separate from approval so that authorization and administrative execution maintain distinct audit records.
 
-```
 
-```
 
 ## September 17, 2026 — Administrator Fulfillment Lifecycle Completed
 
@@ -1012,9 +948,7 @@ Core V1 functionality has been validated:
 
 Save and publish the validated Power Apps version, perform the final end-to-end V1 test, and prepare the project for its V1 portfolio release.
 
-Perfect. Paste this **directly at the bottom** of `PROJECT_JOURNAL.md`:
 
-````markdown
 ## September 21, 2026 — V1 Published and Live Application Validated
 
 ### Objective
@@ -1030,7 +964,6 @@ The following administrative fields now use:
 ```powerfx
 varIsAdmin && varAppMode = "admin"
 ```
-````
 
 Applied to:
 
@@ -1160,11 +1093,3 @@ Complete final V1 portfolio packaging:
 - Prepare the Enterprise Operations Hub portfolio presentation.
 - Freeze V1 before beginning V2 operational enhancements.
 
-````
-
-Then press **⌘S**.
-
-Immediately verify that it really wrote to the Crucial X9 by running:
-
-```
-````
