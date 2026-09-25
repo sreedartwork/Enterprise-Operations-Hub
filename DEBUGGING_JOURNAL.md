@@ -520,11 +520,6 @@ Runtime testing is necessary to validate expressions and connector behavior.
 
 Also, SharePoint-triggered cloud flows may have a short delay before processing newly created items.
 
-Yes. This is exactly the kind of problem that belongs in the **DEBUGGING_JOURNAL.md**, because we had a real issue, tried multiple approaches, identified the cause, and got a working solution.
-
-I'd make this **Issue 003**. Add this to `DEBUGGING_JOURNAL.md`:
-
-````markdown
 ## Issue 004 — Power Apps Requester Field Did Not Auto-Populate Current User
 
 ### Date
@@ -770,29 +765,6 @@ This issue demonstrates troubleshooting across:
 
 - New-record versus existing-record behavior
 
-```
-
-This is a **strong debugging entry** because it doesn't just say “Requester wasn't working.” It documents the failed approaches, why we changed direction, the final solution, and what you learned.
-
-And we should keep the tenant-specific email out of the journal since this is going into your public GitHub portfolio; using `user@tenant.onmicrosoft.com` documents the concept without exposing your actual tenant information.
-
-```
-
-Good. We'll document the **bug first**, since that was a real troubleshooting issue and is valuable portfolio material.
-
-### Debugging Journal — Issue 004
-
-Open your project in VS Code and open:
-
-```text
-
-DEBUGGING_JOURNAL.md
-
-```
-
-Go to the bottom and add this entire entry:
-
-````markdown
 ## Issue 005 — Power Apps Form Submission Failed Because Status Was Required
 
 ### Date
@@ -850,7 +822,6 @@ Parent.Default
 )
 
 ```
-````
 
 The ComboBox `Items` property remained:
 
@@ -886,11 +857,9 @@ When a SharePoint column is required, a Power Apps form must supply a valid valu
 
 System-managed fields can be hidden from the final employee interface, but their required values still need to be supplied through application or automation logic.
 
-```
 
 
 
-```
 
 ## Issue 006 — Power Apps Person Field Displayed SharePoint Claims Instead of Display Name
 
