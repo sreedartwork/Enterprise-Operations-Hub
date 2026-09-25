@@ -1,91 +1,164 @@
 # Enterprise Operations Hub
 
-An enterprise-style Microsoft 365 operations and request management solution built as a professional portfolio project.
+An enterprise-style Microsoft 365 request-management solution built with **SharePoint Online, Power Apps, Power Automate, and Microsoft 365**.
 
-The Enterprise Operations Hub demonstrates how Microsoft 365 administration, SharePoint Online, Power Platform, automation, reporting, scripting, and Microsoft Graph can be combined to support realistic enterprise business processes.
+The Enterprise Operations Hub demonstrates a complete SharePoint access-request lifecycle—from employee submission and approval through administrator fulfillment and completion.
+
+> **V1 Status: Published and validated end-to-end**
+
+## V1 Highlights
+
+- Employee SharePoint access-request submission through Power Apps
+- SharePoint Online request data and lifecycle tracking
+- Automated Request ID generation
+- Power Automate approval and rejection workflow
+- Dedicated **My Requests** experience
+- Role-aware **Admin View**
+- Microsoft 365 group-based administrator detection
+- Controlled `Approved → In Progress → Completed` fulfillment lifecycle
+- Administrator assignment and fulfillment documentation
+- SharePoint Person-field integration
+- Published Power Apps application validated through live testing
+- Project, architecture, requirements, and debugging documentation
 
 ## Project Objective
 
-The goal of this project is to demonstrate the transition from Microsoft 365 / SharePoint administration into Microsoft 365 and Power Platform development.
+The Enterprise Operations Hub was created to demonstrate the progression from Microsoft 365 and SharePoint administration into Microsoft 365 and Power Platform development.
 
-The solution is designed around a fictional enterprise organization of approximately 3,500 employees.
+The solution is modeled around a fictional enterprise organization of approximately **3,500 employees** and applies real-world concepts including request management, approvals, role-aware experiences, fulfillment tracking, auditability, least privilege, and administrative separation of duties.
 
-Employees will use the platform to submit operational and IT requests. Managers can review and approve requests, IT teams can fulfill them, administrators can manage the platform, and leadership can review operational reporting.
+V1 focuses on a **SharePoint Access / Permission Change Request** process. Employees can submit and track requests, authorized approvers can approve or reject them, and administrators can document fulfillment through completion.
 
-## Core Business Process
+The project is designed to expand in later versions with additional Microsoft 365 automation, reporting, identity, security, and governance capabilities.
 
-The planned workflow is:
+## V1 Business Process
 
-Employee  
-↓  
-SharePoint Online Portal  
-↓  
-Power Apps Request Interface  
-↓  
-SharePoint Lists / Dataverse  
-↓  
-Power Automate Workflow  
-↓  
-Manager / IT Approval  
-↓  
-Microsoft 365 / Entra ID  
-↓  
-Reporting, Auditing, and Governance
+The completed V1 workflow is:
 
-## V1 Goal
+```text
+Employee
+    ↓
+Power Apps Request Interface
+    ↓
+SharePoint Online — Access Requests
+    ↓
+Power Automate
+    ↓
+Approval / Rejection
+    ↓
+Administrator Fulfillment
+    ↓
+Request Completion
+```
 
-The first working version will focus on an end-to-end:
+V1 implements a complete **SharePoint Access / Permission Change Request** lifecycle.
 
-**SharePoint Access / Permission Change Request**
+### Request Lifecycle
 
-A user will be able to:
+1. An employee submits a SharePoint access request through Power Apps.
+2. The request is stored in the SharePoint Online `Access Requests` list.
+3. Power Automate generates a unique Request ID such as `AR-00008`.
+4. The request is sent through an approval workflow.
+5. The approval decision and related information are written back to SharePoint.
+6. Approved requests become available for administrator fulfillment.
+7. An administrator records assignment, fulfillment details, and fulfillment dates.
+8. The request progresses through the controlled lifecycle:
 
-1. Access the Enterprise Operations Hub.
-2. Submit a SharePoint permission request.
-3. Provide the required request information.
-4. Send the request into an approval workflow.
-5. Allow the appropriate manager or administrator to approve or reject it.
-6. Track the request status.
-7. Receive workflow notifications.
-8. Maintain a record of the request for auditing and reporting.
+   `Approved → In Progress → Completed`
 
-The V1 milestone is:
+9. The completed request remains in SharePoint as part of the request history and audit trail.
 
-> **SharePoint Online + Power Apps + Power Automate working end-to-end.**
+## Requester and Administrator Experiences
 
-## Planned Technology Stack
+### My Requests
 
-### Microsoft 365
+The employee-facing **My Requests** experience filters the request gallery for the currently signed-in user.
+
+Employees can:
+
+- Submit access requests
+- View their own requests
+- Search their request history
+- Review request status
+- View readable SharePoint Person-field information
+
+Administrative fulfillment fields are hidden from the requester experience.
+
+### Admin View
+
+The **Admin View** provides the administrative fulfillment experience.
+
+Administrator access within the application is determined using Microsoft 365 group membership. Authorized administrators can work with approved, in-progress, and completed requests and document the fulfillment process.
+
+V1 intentionally separates:
+
+**Approval = authorization**
+
+from:
+
+**Fulfillment = execution of the approved change**
+
+This separation provides a clearer operational and audit trail between approving a request and recording that the administrative work was completed.
+
+> **Security note:** Role-aware Power Apps controls improve the application experience but do not replace SharePoint data-layer permissions or enterprise authorization controls.
+
+## Technology Stack
+
+### Implemented in V1
+
+#### Microsoft 365
 
 - SharePoint Online
-- Microsoft Teams
-- Microsoft Entra ID
-- Microsoft Graph
+- Microsoft 365
+- Microsoft 365 group-based role awareness
 
-### Power Platform
+#### Power Platform
 
 - Power Apps
 - Power Automate
-- Dataverse
-- Power BI
 
-### Administration & Automation
+#### V1 Implementation
 
+- SharePoint Online `Access Requests` list
+- SharePoint Person fields
+- Power Apps canvas application
+- Power Fx formulas
+- Power Automate approval workflow
+- Automated Request ID generation
+- Requester and administrator application modes
+- Approval and fulfillment lifecycle tracking
+
+### Planned Future Expansion
+
+Future phases are intended to extend the project beyond the completed V1 implementation.
+
+#### Microsoft 365, Identity, and Automation
+
+- Microsoft Entra ID
+- Microsoft Graph
 - PowerShell
 - PnP PowerShell
-- Microsoft Graph API
 
-### Future Expansion
+#### Power Platform and Reporting
+
+- Dataverse
+- Power BI
+- Additional Power Automate workflows
+- Expanded governance and lifecycle automation
+
+#### Optional Application and Cloud Development
 
 - C#
 - ASP.NET Core Web API
 - Microsoft Azure
 
-The future technologies will be added only after the core Microsoft 365 and Power Platform solution is working.
+Future technologies will be added to the project documentation as they are actually implemented and validated.
 
-## Planned SharePoint Portal
+## Future Portal Expansion
 
-The Enterprise Operations Hub portal is planned to include:
+The completed V1 focuses on the SharePoint access-request workflow and its Power Apps and Power Automate integration.
+
+Future versions of the Enterprise Operations Hub may expand the broader SharePoint portal experience with:
 
 - Home
 - Submit Request
@@ -95,7 +168,37 @@ The Enterprise Operations Hub portal is planned to include:
 - Reports
 - Administration
 
-The SharePoint implementation will demonstrate enterprise concepts including information architecture, permissions, metadata, content types, navigation, search, governance, and lifecycle management.
+Future development is intended to explore additional enterprise concepts such as information architecture, permissions, metadata, navigation, reporting, governance, search, and lifecycle management.
+
+These capabilities are part of the project roadmap and are not presented as completed V1 functionality.
+
+## V1 Screenshots
+
+The following screenshots demonstrate the completed Enterprise Operations Hub V1 workflow.
+
+### Employee — My Requests
+
+The **My Requests** experience allows the signed-in employee to review and search their own SharePoint access requests while keeping administrative fulfillment fields out of the requester experience.
+
+![Enterprise Operations Hub - My Requests](screenshots/enterprise-operations-hub-my-requests.png)
+
+### Administrator — Fulfillment View
+
+The **Admin View** provides authorized administrators with the information needed to manage approved requests through fulfillment and completion.
+
+![Enterprise Operations Hub - Admin View](screenshots/enterprise-operations-hub-admin-view.png)
+
+### Power Automate — Approval Workflow
+
+Power Automate manages the approval/rejection process and writes workflow results back to the SharePoint request record.
+
+![Power Automate - Approval Workflow](screenshots/power-automate-approval-workflow.png)
+
+### SharePoint — Request and Workflow Records
+
+SharePoint Online provides the underlying request data, workflow status, approval information, and fulfillment history.
+
+![SharePoint Access Requests - Workflow Results](screenshots/sharepoint-access-requests-workflow-results.png)
 
 ## Repository Structure
 
