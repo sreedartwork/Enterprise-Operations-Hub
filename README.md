@@ -2,6 +2,8 @@
 
 An enterprise-style Microsoft 365 request-management solution built with **SharePoint Online, Power Apps, Power Automate, and Microsoft 365**.
 
+**Live Project Page:** https://sreedthecoder.com/enterprise-operations-hub/
+
 The Enterprise Operations Hub demonstrates a complete SharePoint access-request lifecycle—from employee submission and approval through administrator fulfillment and completion.
 
 > **V1 Status: Published and validated end-to-end**
@@ -199,6 +201,32 @@ Power Automate manages the approval/rejection process and writes workflow result
 SharePoint Online provides the underlying request data, workflow status, approval information, and fulfillment history.
 
 ![SharePoint Access Requests - Workflow Results](screenshots/sharepoint-access-requests-workflow-results.png)
+
+## What This Project Demonstrates
+
+Enterprise Operations Hub V1 demonstrates hands-on experience with:
+
+- Designing an enterprise-style request-management process in Microsoft 365
+- Building employee and administrator experiences with Power Apps
+- Integrating Power Apps with SharePoint Online lists and Person fields
+- Creating approval and lifecycle automation with Power Automate
+- Implementing Microsoft 365 group-based role awareness
+- Separating request approval from administrator fulfillment
+- Applying least-privilege and auditability concepts to solution design
+- Troubleshooting Power Apps, SharePoint, and Power Automate integration issues
+- Documenting architecture, requirements, implementation decisions, testing, and debugging
+
+## Project Documentation
+
+Detailed project documentation is available in the `docs/` directory.
+
+- [V1 Architecture](docs/architecture/v1-sharepoint-architecture.md)
+- [SharePoint Access Request Requirements](docs/requirements/sharepoint-access-request-requirements.md)
+- [Access Requests List Design](docs/sharepoint/access-requests-list-design.md)
+- [Project Journal](PROJECT_JOURNAL.md)
+- [Debugging Journal](DEBUGGING_JOURNAL.md)
+
+The documentation captures the project's architecture, requirements, SharePoint design decisions, implementation progress, troubleshooting, and lessons learned.
 
 ## Repository Structure
 
