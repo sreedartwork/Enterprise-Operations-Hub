@@ -1093,3 +1093,7 @@ Complete final V1 portfolio packaging:
 - Prepare the Enterprise Operations Hub portfolio presentation.
 - Freeze V1 before beginning V2 operational enhancements.
 
+
+## 2026-09-28 — V2 Development Started
+
+Development of Enterprise Operations Hub V2 has begun on the `v2-development` branch. Initial work focuses on an Operations Dashboard and a scalable dashboard-metrics architecture using SharePoint and Power Automate.
