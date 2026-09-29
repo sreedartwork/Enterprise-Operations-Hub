@@ -1093,3 +1093,13 @@ Complete final V1 portfolio packaging:
 - Prepare the Enterprise Operations Hub portfolio presentation.
 - Freeze V1 before beginning V2 operational enhancements.
 
+
+## 2026-09-28 — V2 Dashboard Metrics Architecture
+
+- Began development of the Operations Dashboard in Power Apps.
+- Identified SharePoint delegation warnings caused by using `CountRows()` against the Access Requests list.
+- Decided to correct the underlying architecture rather than leave delegation warnings in the application.
+- Created a SharePoint `Request Metrics` list to store dashboard totals for Total Requests, Pending Approval, Approved, In Progress, and Completed.
+- Began building the `Access Request - Update Dashboard Metrics` Power Automate flow.
+- Configured the flow to trigger when an item is created or modified in the `Access Requests` list.
+- Next step: retrieve Access Requests with the SharePoint `Get items` action and calculate/update the dashboard metrics.
