@@ -1103,3 +1103,13 @@ Complete final V1 portfolio packaging:
 - Began building the `Access Request - Update Dashboard Metrics` Power Automate flow.
 - Configured the flow to trigger when an item is created or modified in the `Access Requests` list.
 - Next step: retrieve Access Requests with the SharePoint `Get items` action and calculate/update the dashboard metrics.
+
+## 2026-09-29 — V2 Dashboard Metrics Automation
+
+- Built the `Access Request - Update Dashboard Metrics` Power Automate flow.
+- Configured the flow to run when an item is created or modified in the SharePoint `Access Requests` list.
+- Added server-side OData queries for Pending Approval, Approved, In Progress, and Completed request statuses.
+- Added retrieval of total Access Requests and the `Dashboard Metrics` record from the `Request Metrics` SharePoint list.
+- Added an Update Item action to write calculated request counts into the dashboard metrics record.
+- Configured Power Automate expressions to calculate Total Requests, Pending Approval, Approved, In Progress, and Completed counts.
+- Next step: test the automation end-to-end and connect the Power Apps Operations Dashboard to the Request Metrics data.
