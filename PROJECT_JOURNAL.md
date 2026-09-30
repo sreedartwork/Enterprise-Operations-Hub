@@ -1101,3 +1101,7 @@ Development of Enterprise Operations Hub V2 has begun on the `v2-development` br
 ## 2026-09-29 — V2 Automation Progress
 
 Continued Enterprise Operations Hub V2 development on the `v2-development` branch. Built the dashboard metrics automation foundation in Power Automate, including SharePoint status queries and calculated metrics for the Operations Dashboard.
+
+## 2026-09-30 — V2 Operations Dashboard Progress
+
+Completed and validated the V2 Operations Dashboard metrics pipeline on the `v2-development` branch. The dashboard now uses Power Automate and the SharePoint `Request Metrics` list for precomputed metrics instead of direct Power Apps record counting, eliminating delegation warnings. End-to-end testing confirmed that SharePoint request status changes update the metrics and that Power Apps refreshes the latest values when the dashboard is opened. The total-request aggregation was also configured with a documented 5,000-item pagination boundary.
