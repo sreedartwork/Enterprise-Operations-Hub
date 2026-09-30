@@ -1113,3 +1113,17 @@ Complete final V1 portfolio packaging:
 - Added an Update Item action to write calculated request counts into the dashboard metrics record.
 - Configured Power Automate expressions to calculate Total Requests, Pending Approval, Approved, In Progress, and Completed counts.
 - Next step: test the automation end-to-end and connect the Power Apps Operations Dashboard to the Request Metrics data.
+
+## 2026-09-30 — V2 Operations Dashboard Metrics Completed
+
+- Completed and tested the Operations Dashboard metrics architecture.
+- Connected the Power Apps dashboard to the SharePoint `Request Metrics` list.
+- Replaced direct `CountRows()` calculations against `Access Requests` with precomputed metrics retrieved using `LookUp()`.
+- Eliminated Power Apps delegation warnings from Total Requests, Pending Approval, Approved, In Progress, and Completed dashboard metrics.
+- Added `Refresh('Request Metrics')` to `OperationsDashboardScreen.OnVisible` so the dashboard retrieves current metrics whenever the screen is opened.
+- Performed an end-to-end status transition test from Pending Approval → Approved and verified the dashboard metrics updated correctly.
+- Enabled pagination on the Power Automate `Get Total Requests` action with a 5,000-item threshold to provide a defined scaling boundary for the current V2 implementation.
+- Retested the automation after enabling pagination using an Approved → In Progress transition.
+- Verified the final SharePoint metrics: Total Requests = 10, Pending Approval = 0, Approved = 0, In Progress = 1, Completed = 2.
+- Confirmed the complete pipeline: Access Requests → Power Automate → Request Metrics → Power Apps Operations Dashboard.
+- Documented the remaining Power Automate performance advisory: `Get Total Requests` intentionally retrieves the complete request set, so the current V2 design has a documented 5,000-item aggregation boundary.
