@@ -1105,3 +1105,29 @@ Continued Enterprise Operations Hub V2 development on the `v2-development` branc
 ## 2026-09-30 — V2 Operations Dashboard Progress
 
 Completed and validated the V2 Operations Dashboard metrics pipeline on the `v2-development` branch. The dashboard now uses Power Automate and the SharePoint `Request Metrics` list for precomputed metrics instead of direct Power Apps record counting, eliminating delegation warnings. End-to-end testing confirmed that SharePoint request status changes update the metrics and that Power Apps refreshes the latest values when the dashboard is opened. The total-request aggregation was also configured with a documented 5,000-item pagination boundary.
+
+## October 1, 2026 — V2 Recent Activity Development
+
+Continued development of the V2 Operations Dashboard on the `v2-development` branch.
+
+### Work Completed
+
+- Built the SharePoint `Request Activity` event-history structure.
+- Added fields for Request, Event Type, Event Date, Actor, and Activity Details.
+- Defined lifecycle events including Request Created, Approved, Rejected, In Progress, and Completed.
+- Connected `Request Activity` to the Power Apps Operations Dashboard.
+- Built the Recent Activity gallery to display the latest 10 events in newest-first order.
+- Added dashboard refresh behavior using `Refresh('Request Activity')`.
+- Validated the activity display with Approved, In Progress, and Completed test events.
+- Identified the existing `Access Request Activity` Power Automate flow for automated activity-history creation.
+
+### Architecture
+
+`Access Requests → Power Automate → Request Activity → Power Apps Operations Dashboard`
+
+The design separates the current state of a request from its activity history, allowing one request to have multiple lifecycle events.
+
+### Next Step
+
+Complete and validate the existing `Access Request Activity` Power Automate flow, including status-change detection and automated event creation.
+
