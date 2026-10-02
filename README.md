@@ -7,6 +7,8 @@ An enterprise-style Microsoft 365 request-management solution built with **Share
 The Enterprise Operations Hub demonstrates a complete SharePoint access-request lifecycle—from employee submission and approval through administrator fulfillment and completion.
 
 > **V1 Status: Published and validated end-to-end**
+>
+> **V2 Status: In development — initial Operations Dashboard metrics implemented and validated**
 
 ## V1 Highlights
 
@@ -22,6 +24,28 @@ The Enterprise Operations Hub demonstrates a complete SharePoint access-request 
 - SharePoint Person-field integration
 - Published Power Apps application validated through live testing
 - Project, architecture, requirements, and debugging documentation
+
+## V2 — Operations Dashboard
+
+V2 begins expanding the solution from individual request processing into operational workload visibility for administrators.
+
+The initial Operations Dashboard capability has been implemented and validated with the following metrics:
+
+- Total Requests
+- Pending Approval
+- Approved
+- In Progress
+- Completed
+
+During development, direct Power Apps calculations against the SharePoint `Access Requests` list produced delegation warnings. Rather than relying on potentially incomplete client-side calculations as the dataset grows, the dashboard architecture was refactored to use precomputed metrics:
+
+Access Requests → Power Automate → Request Metrics → Power Apps Operations Dashboard
+
+Power Automate calculates the request metrics and stores them in the SharePoint `Request Metrics` list. Power Apps retrieves those values and refreshes the metrics when the Operations Dashboard becomes visible.
+
+The dashboard pipeline has been tested end-to-end using request status transitions. The current V2 implementation also documents a **5,000-item aggregation boundary** for the total-request calculation and identifies incremental metrics or a dedicated reporting/data layer as potential future scaling strategies if requirements grow substantially.
+
+V2 remains in development. Planned expansion includes recent activity, SLA and overdue indicators, additional filtering, notifications, reporting, and other operational-management capabilities.
 
 ## Project Objective
 
@@ -223,6 +247,9 @@ Detailed project documentation is available in the `docs/` directory.
 - [V1 Architecture](docs/architecture/v1-sharepoint-architecture.md)
 - [SharePoint Access Request Requirements](docs/requirements/sharepoint-access-request-requirements.md)
 - [Access Requests List Design](docs/sharepoint/access-requests-list-design.md)
+- [V2 Operations Dashboard Requirements](docs/requirements/v2-operations-dashboard-requirements.md)
+- [Dashboard Metrics Architecture](docs/architecture/dashboard-metrics-architecture.md)
+- [Dashboard Metrics and Scalability Learning Notes](docs/learning-notes/dashboard-metrics-and-scalability.md)
 - [Project Journal](PROJECT_JOURNAL.md)
 - [Debugging Journal](DEBUGGING_JOURNAL.md)
 
@@ -243,6 +270,7 @@ Enterprise-Operations-Hub/
 │   ├── powershell/
 │   ├── graph/
 │   ├── governance/
+│   ├── learning-notes/
 │   ├── testing/
 │   └── environment-setup.md
 ├── screenshots/
