@@ -1127,3 +1127,57 @@ Complete final V1 portfolio packaging:
 - Verified the final SharePoint metrics: Total Requests = 10, Pending Approval = 0, Approved = 0, In Progress = 1, Completed = 2.
 - Confirmed the complete pipeline: Access Requests → Power Automate → Request Metrics → Power Apps Operations Dashboard.
 - Documented the remaining Power Automate performance advisory: `Get Total Requests` intentionally retrieves the complete request set, so the current V2 design has a documented 5,000-item aggregation boundary.
+
+---
+
+## October 2, 2026 — V2 Recent Activity and Dashboard Automation
+
+### Recent Activity Pipeline Validated
+
+Continued development of the V2 Operations Dashboard and validated the Recent Activity architecture end-to-end.
+
+Current activity pipeline:
+
+**Access Requests → Power Automate → Request Activity → Power Apps Operations Dashboard**
+
+Validated that meaningful request status changes automatically create activity-history records and appear in the Power Apps Recent Activity gallery.
+
+Successfully tested:
+
+- Approved
+- Rejected
+- In Progress
+- Completed
+- Pending Approval
+
+A negative test also confirmed that editing an unrelated field without changing Status does not create an activity-history event.
+
+### Dashboard Refresh Improved
+
+Updated `OperationsDashboardScreen.OnVisible` to refresh both dashboard data sources:
+
+```powerfx
+Refresh('Request Activity');
+Refresh('Request Metrics');
+
+
+### 2. Save it
+
+Press:
+
+**Ctrl + O**
+
+Then press **Enter** to confirm the filename.
+
+Then:
+
+**Ctrl + X**
+
+to exit Pico.
+
+### 3. Immediately check Git
+
+Run:
+
+```bash
+git status
