@@ -1201,3 +1201,32 @@ git status
 Request Type → Priority → SLA Due Date → SLA Status → Operations Dashboard indicators
 
 **Status:** DESIGN / PLANNED — not yet implemented.
+
+## 2026-10-04 — V2 SLA Initialization and Policy-Driven Automation
+
+### Completed
+- Created the `SLA Policies` SharePoint configuration list.
+- Defined configurable SLA policies for Critical, High, Normal, and Low priorities.
+- Separated SLA target duration from duration unit and At Risk threshold.
+- Created the `Access Request - Initialize SLA` Power Automate flow.
+- Configured the flow to retrieve the SLA policy matching the Access Request priority.
+- Added validation to confirm a matching SLA policy was returned.
+- Configured the flow to preserve unrelated Access Request business state rather than overwrite approval, fulfillment, status, or cancellation data.
+- Configured SLA initialization to set `SLA Status` to `Within SLA`.
+- Implemented automatic SLA Due Date calculation using the request Created timestamp and the Target Duration retrieved from `SLA Policies`.
+- Successfully validated the Normal-priority SLA initialization with test request `AR-00019`.
+
+### Architecture Decisions
+- SLA business rules are stored in `SLA Policies` rather than hard-coded into Power Automate.
+- Power Automate is responsible for orchestration; SharePoint configuration data defines the SLA policy.
+- Changing an SLA target should be a configuration change rather than require redesigning the automation.
+- The SLA initialization flow owns SLA initialization fields and preserves unrelated request state.
+- SLA initialization and SLA monitoring are separate responsibilities.
+- A request can become overdue solely because time passes, so overdue detection should not depend only on item-created or item-modified triggers.
+
+### Next
+- Build a scheduled SLA evaluation flow.
+- Detect requests approaching their At Risk threshold.
+- Detect overdue requests.
+- Update SLA Status without modifying unrelated request state.
+- Surface At Risk and Overdue requests on the Operations Dashboard.

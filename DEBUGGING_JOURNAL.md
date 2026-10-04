@@ -1116,3 +1116,32 @@ The debugging order should therefore include:
 6. Only then investigate layout or structural changes.
 
 This prevented unnecessary modifications to a form whose underlying layout was already functioning correctly.
+
+## 2026-10-04 — SLA Due Date Calculation Type Error
+
+### Problem
+The first test of `Access Request - Initialize SLA` failed during the SharePoint Update item action.
+
+### Error
+The Power Automate `addHours()` function expected its second parameter to be an integer, but the `TargetDuration` value returned from the SLA policy was supplied as a Float.
+
+### Original Logic
+The SLA Due Date calculation passed `TargetDuration` directly into `addHours()`.
+
+### Resolution
+Explicitly converted the policy value to an integer:
+
+addHours(
+    triggerBody()?['Created'],
+    int(items('For_each')?['TargetDuration'])
+)
+
+### Validation
+- Initial Normal-priority test failed and did not populate SLA Due Date.
+- After adding the explicit `int()` conversion, the next Power Automate run succeeded.
+- Test request `AR-00019` successfully received a calculated SLA Due Date.
+- SLA Status remained `Within SLA`.
+- Existing request fields were preserved.
+
+### Lesson Learned
+A successful architecture can still fail because of data-type differences between SharePoint and Power Automate functions. Validate both the business logic and the runtime data types expected by expressions.
