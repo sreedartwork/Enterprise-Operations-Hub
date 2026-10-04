@@ -1181,3 +1181,23 @@ Run:
 
 ```bash
 git status
+
+## V2 — SLA and Priority Requirements Design — 2026-10-03
+
+### Design Decisions
+- Priority belongs to the Access Request as part of its operational state. The Operations Dashboard displays and acts on this data but does not own it.
+- Initial priority should be determined from request type/business rules rather than relying solely on requester-selected urgency.
+- Priority will determine the applicable SLA target.
+- Authorized administrators/technicians may override priority when business circumstances change.
+- Priority overrides should preserve the previous priority, new priority, actor, timestamp, and reason in the audit/activity history.
+- Override reasons should use standardized selections where possible, with an **Other** option for a custom explanation.
+- Changing priority should recalculate the applicable SLA deadline.
+- Approval and fulfillment are separate operational responsibilities. Future SLA design should distinguish time waiting for authorization from fulfillment performance.
+- The previous operational workflow of repeated approval follow-ups and eventual closure when approval is not received will inform future approval-SLA design but is not yet an implemented V2 rule.
+- Completing a request should stop the SLA clock while preserving the final SLA result (**Met** or **Breached**) for historical auditing and reporting.
+- Preserved SLA results can later support reporting such as SLA compliance percentage, resolution time, breaches by priority/request type, and escalation trends.
+
+### Planned Implementation
+Request Type → Priority → SLA Due Date → SLA Status → Operations Dashboard indicators
+
+**Status:** DESIGN / PLANNED — not yet implemented.
