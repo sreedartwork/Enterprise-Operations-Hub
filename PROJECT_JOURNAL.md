@@ -44,7 +44,7 @@ Power Automate
 Approval Process
     ↓
 IT / M365 Administration
-`````
+```
 
 Future versions may expand the architecture with:
 
@@ -343,7 +343,6 @@ The next phase is:
 The first implementation target will be the:
 
 **SharePoint Access / Permission Change Request**
-
 
 ## September 2026 — Access Requests SharePoint List Implemented
 
@@ -670,7 +669,6 @@ Both the **Approved** and **Rejected** workflow paths have been successfully tes
 
 Build the fulfillment stage for approved requests so that an administrator can process the authorized SharePoint access change and record the fulfillment details.
 
-
 ---
 
 ## September 16, 2026 — My Requests View and Published App Validation
@@ -750,8 +748,6 @@ Continue refining the My Requests experience and then build the fulfillment stag
 `Approved → In Progress → Completed`
 
 The fulfillment stage will remain separate from approval so that authorization and administrative execution maintain distinct audit records.
-
-
 
 ## September 17, 2026 — Administrator Fulfillment Lifecycle Completed
 
@@ -948,7 +944,6 @@ Core V1 functionality has been validated:
 
 Save and publish the validated Power Apps version, perform the final end-to-end V1 test, and prepare the project for its V1 portfolio release.
 
-
 ## September 21, 2026 — V1 Published and Live Application Validated
 
 ### Objective
@@ -1093,7 +1088,6 @@ Complete final V1 portfolio packaging:
 - Prepare the Enterprise Operations Hub portfolio presentation.
 - Freeze V1 before beginning V2 operational enhancements.
 
-
 ## 2026-09-28 — V2 Dashboard Metrics Architecture
 
 - Began development of the Operations Dashboard in Power Apps.
@@ -1156,7 +1150,7 @@ A negative test also confirmed that editing an unrelated field without changing 
 
 Updated `OperationsDashboardScreen.OnVisible` to refresh both dashboard data sources:
 
-```powerfx
+````powerfx
 Refresh('Request Activity');
 Refresh('Request Metrics');
 
@@ -1230,3 +1224,158 @@ Request Type → Priority → SLA Due Date → SLA Status → Operations Dashboa
 - Detect overdue requests.
 - Update SLA Status without modifying unrelated request state.
 - Surface At Risk and Overdue requests on the Operations Dashboard.
+Great. Now paste this **directly underneath the existing `### Next` section**. This records what we actually built and validated after that plan.
+
+```markdown
+## 2026-10-04 — V2 Scheduled SLA Evaluation and Overdue Dashboard Indicator
+
+### Completed
+
+Continued development of the V2 SLA capability by implementing time-driven SLA monitoring and surfacing overdue requests on the Operations Dashboard.
+
+Created and validated the scheduled Power Automate flow:
+
+`Access Request - Evaluate SLA`
+
+The flow runs once per hour and evaluates active Access Requests to determine whether their SLA deadline has passed.
+
+### Scheduled SLA Evaluation Architecture
+
+The evaluation process follows:
+
+Access Requests → Scheduled Power Automate Evaluation → SLA Status Update
+
+The flow retrieves requests using the following filter:
+
+```text
+Status ne 'Completed' and Status ne 'Rejected' and Status ne 'Cancelled'
+````
+
+This prevents terminal requests from being unnecessarily evaluated during each scheduled run.
+
+For each remaining request, the flow evaluates whether:
+
+- `SLA Due Date` contains a value.
+- `SLA Due Date` is earlier than the current time.
+- The request remains in an active operational state.
+
+When these conditions are satisfied, the flow updates:
+
+```text
+SLA Status = Overdue
+```
+
+The flow preserves unrelated request fields and business state.
+
+### Architecture Decision — Time-Driven Evaluation
+
+SLA monitoring was intentionally separated from SLA initialization.
+
+The initialization flow determines the original SLA deadline when a request is created.
+
+The scheduled evaluation flow determines whether that deadline has subsequently been exceeded.
+
+This separation is necessary because a request can become overdue simply because time passes. No SharePoint item modification is required for an SLA breach to occur.
+
+### Dashboard Metrics Extended
+
+Extended the existing:
+
+`Access Request - Update Dashboard Metrics`
+
+flow with a new:
+
+`Get Overdue Requests`
+
+aggregation step.
+
+The dashboard metrics pipeline now includes overdue-request information:
+
+Access Requests → Power Automate → Request Metrics → Power Apps Operations Dashboard
+
+The `Request Metrics` SharePoint list was extended to store the current Overdue count.
+
+During implementation, the Overdue query initially failed because the SharePoint display name was mistaken for the column's internal name.
+
+The correct internal field name was identified as:
+
+```text
+SLA_x0020_Status
+```
+
+The working OData query is:
+
+```text
+SLA_x0020_Status eq 'Overdue'
+```
+
+The detailed troubleshooting process is documented separately in `DEBUGGING_JOURNAL.md`.
+
+### Power Apps Operations Dashboard Updated
+
+Added an `Overdue` KPI to the Operations Dashboard.
+
+The dashboard now displays:
+
+- Total Requests
+- Pending Approval
+- Approved
+- In Progress
+- Completed
+- Overdue
+
+The Overdue value is retrieved from the precomputed `Request Metrics` data rather than calculated directly against the operational `Access Requests` list in Power Apps.
+
+This preserves the existing V2 architecture in which aggregation responsibility remains outside the presentation layer.
+
+### Validation
+
+End-to-end testing confirmed:
+
+- The scheduled SLA evaluation flow runs successfully.
+- Active requests with expired SLA Due Dates can be marked `Overdue`.
+- Terminal requests are excluded from scheduled SLA evaluation.
+- The dashboard metrics flow successfully counts overdue requests.
+- `Request Metrics` stored `Overdue = 1`.
+- Power Apps successfully retrieved the updated metric.
+- The Operations Dashboard displayed `1 Overdue`.
+- Existing Total, Pending Approval, Approved, In Progress, and Completed metrics continued functioning.
+
+### Architecture Learning
+
+This implementation separates five distinct responsibilities:
+
+1. `Access Requests` stores current operational request state.
+2. SLA initialization assigns the applicable deadline.
+3. Scheduled SLA evaluation detects time-based SLA breaches.
+4. Power Automate aggregates operational metrics into `Request Metrics`.
+5. Power Apps presents the resulting operational information.
+
+This prevents the Power Apps interface from becoming responsible for business-rule execution, time-based monitoring, and large-scale aggregation.
+
+### Current V2 Status
+
+The following V2 dashboard capabilities are now implemented and validated:
+
+- Precomputed operational KPI metrics
+- Recent Activity history
+- SLA initialization
+- Scheduled overdue evaluation
+- Overdue request aggregation
+- Overdue KPI presentation
+
+Remaining V2 development includes:
+
+- At Risk SLA evaluation
+- Additional filtering
+- Notifications
+- Reporting / Power BI integration
+- Additional request-management metrics
+- Documentation, testing, and final interface refinement
+
+```
+
+This entry is important because it shows that we're no longer just building individual Power Automate flows. We're documenting **why responsibilities are separated across the architecture**—which is exactly the kind of reasoning you want to be able to explain in an engineer/architect interview.
+
+Once you've pasted and saved that, tell me **done**. Then we'll decide whether to document the Power Apps formula issue separately or move forward.
+```

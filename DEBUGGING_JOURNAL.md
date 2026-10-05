@@ -547,6 +547,7 @@ Its Items property was:
 Choices([@'Access Requests'].'Requester')
 
 ```
+
 ````
 
 However, when clicking **+ New**, the Requester field remained blank and displayed:
@@ -1117,7 +1118,7 @@ The debugging order should therefore include:
 
 This prevented unnecessary modifications to a form whose underlying layout was already functioning correctly.
 
-## 2026-10-04 — SLA Due Date Calculation Type Error
+## Issue 008 — 2026-10-04 — SLA Due Date Calculation Type Error
 
 ### Problem
 The first test of `Access Request - Initialize SLA` failed during the SharePoint Update item action.
@@ -1145,3 +1146,116 @@ addHours(
 
 ### Lesson Learned
 A successful architecture can still fail because of data-type differences between SharePoint and Power Automate functions. Validate both the business logic and the runtime data types expected by expressions.
+
+
+## Issue 009 — 2026-10-04 — SharePoint Internal Column Name Caused Overdue Metrics Flow Failure
+
+### Problem
+
+While extending the `Access Request - Update Dashboard Metrics` Power Automate flow to calculate overdue requests, a new `Get Overdue Requests` action was added.
+
+The initial OData Filter Query was:
+
+```text
+SLAStatus eq 'Overdue'
+
+
+Good. Now let's add **Issue 009** directly underneath Issue 008 in `DEBUGGING_JOURNAL.md`.
+
+Paste this:
+
+```markdown
+## Issue 009 — 2026-10-04 — SharePoint Internal Column Name Caused Overdue Metrics Flow Failure
+
+### Problem
+
+While extending the `Access Request - Update Dashboard Metrics` Power Automate flow to calculate overdue requests, a new `Get Overdue Requests` action was added.
+
+The initial OData Filter Query was:
+
+```text
+SLAStatus eq 'Overdue'
+```
+
+When the flow was tested, the `Get Overdue Requests` action failed.
+
+### Error
+
+Power Automate reported that the column:
+
+```text
+SLAStatus
+```
+
+did not exist.
+
+### Investigation
+
+The visible SharePoint column was named:
+
+```text
+SLA Status
+```
+
+However, SharePoint display names and internal column names are not always the same.
+
+The `SLA Status` column was opened through SharePoint List Settings and its field information was inspected in the browser URL.
+
+The actual SharePoint internal name was identified as:
+
+```text
+SLA_x0020_Status
+```
+
+The `_x0020_` portion represents the space contained in the original column name.
+
+### Root Cause
+
+The Power Automate OData Filter Query referenced an assumed column name instead of the actual SharePoint internal column name.
+
+The incorrect query was:
+
+```text
+SLAStatus eq 'Overdue'
+```
+
+### Resolution
+
+The `Get Overdue Requests` Filter Query was changed to:
+
+```text
+SLA_x0020_Status eq 'Overdue'
+```
+
+The flow was saved and tested again.
+
+### Validation
+
+After correcting the internal column name:
+
+- `Get Overdue Requests` completed successfully.
+- The dashboard metrics flow completed successfully.
+- The `Request Metrics` SharePoint list was updated.
+- The `Overdue` metric was calculated as `1`.
+- The persisted value was verified directly in SharePoint.
+
+### Lesson Learned
+
+SharePoint display names should not be assumed to be the same as internal column names.
+
+When an OData query reports that a SharePoint column does not exist:
+
+1. Verify the column exists in the list.
+2. Open the column through List Settings.
+3. Inspect the `Field=` value in the column settings URL.
+4. Use the actual internal name in the Power Automate OData query.
+5. Retest the flow.
+6. Verify the persisted business result rather than relying only on a successful flow run.
+
+This issue reinforced the importance of distinguishing SharePoint display names from internal field names when building Power Automate queries.
+```
+
+This is a strong debugging entry because it captures **symptom → investigation → root cause → correction → persisted-data verification**.
+
+Once that's pasted, **don't add Issue 010 yet**. We have another separate debugging lesson from today—the **Power Apps cached schema after adding the `Overdue` column**—and that should be its own entry.
+````
