@@ -1379,3 +1379,42 @@ This entry is important because it shows that we're no longer just building indi
 
 Once you've pasted and saved that, tell me **done**. Then we'll decide whether to document the Power Apps formula issue separately or move forward.
 ```
+
+## 2026-10-05 — SLA Evaluator Validation
+
+### Completed
+
+- Completed the Power Automate `Access Request - Evaluate SLA` flow.
+- Configured scheduled evaluation of Access Requests.
+- Implemented SLA status evaluation using:
+  - SLA Due Date
+  - SLA At Risk Date
+  - Current UTC time
+- Preserved existing SharePoint item values during automated updates.
+- Validated the SLA state transitions:
+  - Within SLA
+  - At Risk
+  - Overdue
+
+### Testing
+
+Created `Test - SLA At Risk Immediate` with:
+
+- Priority: Normal
+- SLA Due Date: October 6, 2026
+- SLA At Risk Date: October 5, 2026
+
+Manually ran the SLA evaluator and confirmed:
+
+- The request entered the At Risk conditional branch.
+- The SharePoint Update Item action executed successfully.
+- SLA Status changed from `Within SLA` to `At Risk`.
+
+### Result
+
+The Enterprise Operations Hub can now automatically evaluate active access
+requests and update their SLA status as deadlines approach or pass.
+
+### Next
+
+- Add SLA notifications and escalation logic for At Risk and Overdue requests.
