@@ -1449,3 +1449,67 @@ Future polish:
 
 - Format SLA dates from UTC/ISO format into a user-friendly local date/time format.
 - Consider role-based notification recipients instead of the current test mailbox.
+## 2026-10-07 — SLA Overdue Escalation & Duplicate Notification Prevention
+
+### Completed
+
+Enhanced the `Access Request - Evaluate SLA` flow to support SLA escalation while preventing repeated notifications during scheduled evaluations.
+
+Updated the Overdue condition to require:
+
+- SLA Due Date is not null.
+- SLA Due Date is earlier than the current UTC time.
+- SLA Status is not already `Overdue`.
+
+Updated the At Risk condition to require:
+
+- SLA At Risk Date is not null.
+- SLA At Risk Date is earlier than the current UTC time.
+- SLA Status is not already `At Risk`.
+
+### Overdue Escalation
+
+Added an Office 365 Outlook `Send an email (V2)` action to the Overdue branch.
+
+The escalation email includes:
+
+- Request ID
+- Request Title
+- Priority
+- SLA Status
+- SLA At Risk Date
+- SLA Due Date
+
+Overdue notifications are marked as High Importance.
+
+### Validation
+
+Validated the evaluator against test requests `AR-00020` and `AR-00021`.
+
+Confirmed the complete Overdue automation path:
+
+1. Scheduled SLA evaluator retrieved active requests.
+2. Due Date was compared with the current UTC time.
+3. Existing SLA Status was checked to prevent duplicate escalation.
+4. Eligible requests transitioned to `Overdue`.
+5. SharePoint `Update item` completed successfully.
+6. Outlook `Send an email (V2)` completed successfully.
+7. SLA Overdue escalation emails were delivered to the Microsoft 365 mailbox.
+
+Confirmed that subsequent evaluator runs do not resend the Overdue notification when the request already has an SLA Status of `Overdue`.
+
+### Result
+
+The SLA evaluator now supports controlled state transitions:
+
+`Within SLA → At Risk → Overdue`
+
+Notifications are tied to the transition into At Risk or Overdue rather than being repeatedly sent on every scheduled evaluator run.
+
+### Future Enhancements
+
+- Format SLA dates from UTC/ISO into a user-friendly local date/time format.
+- Add an operational priority/escalation queue for unresolved Overdue requests.
+- Track how long requests remain Overdue.
+- Define escalation behavior for requests that remain unresolved for multiple days.
+- Consider role-based notification recipients instead of the current test mailbox.
