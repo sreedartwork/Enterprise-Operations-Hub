@@ -1418,3 +1418,34 @@ requests and update their SLA status as deadlines approach or pass.
 ### Next
 
 - Add SLA notifications and escalation logic for At Risk and Overdue requests.
+
+### SLA At Risk Notification Validation
+
+Added an Outlook notification to the `Access Request - Evaluate SLA` flow for requests that enter the `At Risk` state.
+
+The notification includes:
+
+- Request ID
+- Request Title
+- Priority
+- SLA Status
+- SLA At Risk Date
+- SLA Due Date
+
+Validation performed using request `AR-00020` (`Test - SLA At Risk Normal`).
+
+Confirmed the complete automation path:
+
+1. Scheduled SLA evaluator retrieved the active request.
+2. Overdue condition evaluated False.
+3. At Risk condition evaluated True.
+4. SharePoint `Update item` completed successfully.
+5. Outlook `Send an email (V2)` completed successfully.
+6. SLA alert email was delivered to the Microsoft 365 mailbox.
+
+Result: SLA At Risk notification functionality is working end-to-end.
+
+Future polish:
+
+- Format SLA dates from UTC/ISO format into a user-friendly local date/time format.
+- Consider role-based notification recipients instead of the current test mailbox.
