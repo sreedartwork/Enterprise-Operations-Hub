@@ -1513,3 +1513,63 @@ Notifications are tied to the transition into At Risk or Overdue rather than bei
 - Track how long requests remain Overdue.
 - Define escalation behavior for requests that remain unresolved for multiple days.
 - Consider role-based notification recipients instead of the current test mailbox.
+
+## 2026-10-07 — SLA Notification & Duplicate Suppression Validation
+
+### Completed
+
+- Completed and validated automated SLA notifications in the Power Automate `Access Request - Evaluate SLA` flow.
+- Added Microsoft 365 Outlook email notifications for both SLA states:
+  - `At Risk`
+  - `Overdue`
+- Added state checks to prevent duplicate notifications during subsequent scheduled evaluator runs.
+- The Overdue branch now requires the current SLA Status to be different from `Overdue` before updating the request and sending an escalation.
+- The At Risk branch requires the current SLA Status to be different from `At Risk` before updating the request and sending an alert.
+
+### At Risk Validation
+
+Validated the At Risk path using `Test - SLA At Risk Normal` (AR-00020).
+
+Confirmed:
+
+- The Overdue condition evaluated False while the SLA Due Date was still in the future.
+- The At Risk condition evaluated True after the SLA At Risk Date passed.
+- SharePoint `Update item` completed successfully.
+- SLA Status changed to `At Risk`.
+- Microsoft 365 Outlook `Send an email (V2)` completed successfully.
+- The SLA At Risk alert was delivered to the Outlook inbox.
+
+### Overdue Validation
+
+After the SLA Due Date passed, confirmed:
+
+- The Overdue condition evaluated True.
+- SharePoint updated the request to `Overdue`.
+- The Outlook escalation action completed successfully.
+- The SLA Overdue escalation email was delivered to the Outlook inbox.
+- The escalation included the Request ID, request title, priority, SLA status, At Risk Date, and Due Date.
+
+### Duplicate Notification Suppression
+
+Ran the evaluator again after the requests had already reached their SLA states.
+
+Confirmed:
+
+- Requests already marked `Overdue` did not enter the Overdue update/notification branch again.
+- Requests already marked `At Risk` do not re-enter the At Risk update/notification branch while remaining in that state.
+- Update and email actions were skipped when the request was already in the corresponding SLA state.
+- No additional duplicate SLA emails were generated during the validation run.
+
+### Result
+
+The Enterprise Operations Hub SLA evaluator now supports state-aware SLA automation:
+
+`Within SLA -> At Risk -> Overdue`
+
+The evaluator can automatically update SharePoint request state, send Microsoft 365 Outlook notifications when SLA thresholds are crossed, and suppress repeated notifications on subsequent scheduled evaluations.
+
+### Follow-up
+
+- Format SLA timestamps into user-friendly local date/time values in notification emails.
+- Continue V2 reporting, metrics, testing, and documentation work.
+
