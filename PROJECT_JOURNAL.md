@@ -1604,3 +1604,34 @@ and Power Automate. All four SLA states have now been demonstrated.
 - Improve SLA date formatting in notification emails.
 - Expand automated testing and project documentation.
 
+
+## 2026-10-08 — V2 SLA Overdue Detection and Email Escalation Validated
+
+### Test Scenario
+- Request: Test - SLA Breached 9:10 PM
+- Request ID: AR-00024
+- SharePoint Item ID: 24
+- Priority: Critical
+- Request Status: Draft
+- SLA Due Date: October 8, 2026, 9:15 PM Eastern
+- Test method: Manually adjusted the SLA deadline to a past time, then observed the scheduled Evaluate SLA flow.
+
+### Verified Results
+- Access Request - Evaluate SLA completed successfully.
+- The scheduled flow evaluated 15 SharePoint items.
+- The condition for the test request followed the True branch.
+- Update item successfully wrote SLA Status = Overdue.
+- SharePoint independently displayed the request as Overdue.
+- Send an email (V2) completed successfully.
+- Outlook received the high-importance SLA escalation email at approximately 10:00 PM.
+- The escalation email correctly identified AR-00024, Critical priority, and Overdue status.
+- The request lifecycle Status remained Draft.
+
+### Follow-Up Improvements
+- Recalculate or validate the SLA At Risk Date when the SLA Due Date changes.
+- Format notification timestamps in Eastern Time rather than raw UTC.
+- Continue final edge-case testing and dashboard improvements.
+
+### Outcome
+PASS — Automated overdue detection, SharePoint status update, and email escalation validated end-to-end.
+
