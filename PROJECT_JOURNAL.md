@@ -1449,6 +1449,7 @@ Future polish:
 
 - Format SLA dates from UTC/ISO format into a user-friendly local date/time format.
 - Consider role-based notification recipients instead of the current test mailbox.
+
 ## 2026-10-07 — SLA Overdue Escalation & Duplicate Notification Prevention
 
 ### Completed
@@ -1573,10 +1574,10 @@ The evaluator can automatically update SharePoint request state, send Microsoft 
 - Format SLA timestamps into user-friendly local date/time values in notification emails.
 - Continue V2 reporting, metrics, testing, and documentation work.
 
-
 ## 2026-10-08 — V2 SLA Completion Automation Validated
 
 ### Completed
+
 - Successfully tested the Access Request - Complete SLA flow.
 - Created test request: Test - SLA Completion Before Deadline.
 - SharePoint Item ID: 22.
@@ -1589,6 +1590,7 @@ The evaluator can automatically update SharePoint request state, send Microsoft 
 - Verified completion occurred before the SLA deadline.
 
 ### V2 SLA Lifecycle
+
 - Within SLA: Initial monitoring state.
 - At Risk: Approaching the SLA deadline.
 - Overdue: SLA deadline exceeded.
@@ -1596,18 +1598,20 @@ The evaluator can automatically update SharePoint request state, send Microsoft 
 - Previously validated transition-based email alerts and duplicate suppression.
 
 ### Result
+
 Successfully validated the SLA completion scenario through SharePoint
 and Power Automate. All four SLA states have now been demonstrated.
 
 ### Next Steps
+
 - Continue V2 reporting and dashboard improvements.
 - Improve SLA date formatting in notification emails.
 - Expand automated testing and project documentation.
 
-
 ## 2026-10-08 — V2 SLA Overdue Detection and Email Escalation Validated
 
 ### Test Scenario
+
 - Request: Test - SLA Breached 9:10 PM
 - Request ID: AR-00024
 - SharePoint Item ID: 24
@@ -1617,6 +1621,7 @@ and Power Automate. All four SLA states have now been demonstrated.
 - Test method: Manually adjusted the SLA deadline to a past time, then observed the scheduled Evaluate SLA flow.
 
 ### Verified Results
+
 - Access Request - Evaluate SLA completed successfully.
 - The scheduled flow evaluated 15 SharePoint items.
 - The condition for the test request followed the True branch.
@@ -1628,22 +1633,25 @@ and Power Automate. All four SLA states have now been demonstrated.
 - The request lifecycle Status remained Draft.
 
 ### Follow-Up Improvements
+
 - Recalculate or validate the SLA At Risk Date when the SLA Due Date changes.
 - Format notification timestamps in Eastern Time rather than raw UTC.
 - Continue final edge-case testing and dashboard improvements.
 
 ### Outcome
-PASS — Automated overdue detection, SharePoint status update, and email escalation validated end-to-end.
 
+PASS — Automated overdue detection, SharePoint status update, and email escalation validated end-to-end.
 
 ---
 
 ## 2026-10-10 — V2 SLA Priority Recalculation Testing
 
 ### Objective
+
 Validate automatic SLA recalculation when an existing SharePoint Access Request changes Priority.
 
 ### Work Completed
+
 - Configured the Access Request - Recalculate SLA Dates flow.
 - Used SharePoint Get changes to detect Priority modifications.
 - Added a condition to exclude Completed requests.
@@ -1653,6 +1661,7 @@ Validate automatic SLA recalculation when an existing SharePoint Access Request 
 - Added SLA Status classification for Within SLA, At Risk, and Overdue.
 
 ### Successful Test
+
 Test item: Test - Request Created Activity 2
 
 - Priority changed to High.
@@ -1662,29 +1671,33 @@ Test item: Test - Request Created Activity 2
 - Confirmed priority-based SLA recalculation works for the tested request.
 
 ### Outstanding Verification
+
 Power Automate previously warned about a potential circular trigger loop.
 
 The Priority-change condition is intended to prevent repeated updates, but run history must still be reviewed to confirm this behavior.
 
 ### Next Session
+
 1. Review Power Automate run history.
 2. Verify circular-loop protection.
 3. Test priority recalculation on a fresh request.
 4. Complete regression testing and final documentation.
 
 ### Status
+
 Priority recalculation: Functionally tested.
 Circular-loop protection: Verification pending.
-
 
 ---
 
 ## 2026-10-10 — V2 SLA Recalculation Validated
 
 ### Test Objective
+
 Verify that changing the Priority of an existing Access Request recalculates SLA deadlines and updates SharePoint without causing repeated updates.
 
 ### Test Request
+
 - Request ID: AR-00014
 - Title: Test - Request Created Activity 2
 - Original Priority: High
@@ -1692,6 +1705,7 @@ Verify that changing the Priority of an existing Access Request recalculates SLA
 - Request Status: Draft
 
 ### Results
+
 - Priority change detected successfully.
 - Matching Normal SLA policy retrieved.
 - SLA Due Date recalculated.
@@ -1701,7 +1715,9 @@ Verify that changing the Priority of an existing Access Request recalculates SLA
 - Follow-up executions were observed stopping at the initial condition without updating the item.
 
 ### Power Automate Verification
+
 The successful recalculation run showed green checkmarks for:
+
 - Get changes
 - Priority-change condition
 - Get items
@@ -1712,26 +1728,30 @@ The successful recalculation run showed green checkmarks for:
 - Update item
 
 ### Conclusion
+
 Priority-based SLA recalculation validated for the tested High-to-Normal scenario.
 
 Circular-loop protection demonstrated through skipped update actions in subsequent executions.
 
 ### Remaining Work
+
 - Fresh-request regression testing
 - Cross-flow interaction testing
 - Final dashboard and reporting review
 - Portfolio documentation and demonstration preparation
 
-
 ## 2026-10-10 — V2 Fresh-Request SLA Regression Validation
 
 ### Test Scenario
+
 Created a new SharePoint Access Request:
+
 - Request Title: Test - V2 SLA Regression
 - Initial Priority: High
 - Request Status: Submitted
 
 ### Validation Performed
+
 1. Confirmed SLA initialization populated the initial deadline.
 2. Changed request priority from High to Normal.
 3. Verified the Recalculate SLA Dates flow executed successfully.
@@ -1739,6 +1759,7 @@ Created a new SharePoint Access Request:
 5. Verified the recalculated dates were saved to SharePoint.
 
 ### Verified Results
+
 - Priority: Normal
 - SLA Due Date: October 12, 2026, 2:07 PM EDT
 - SLA At Risk Date: October 12, 2026, 2:07 AM EDT
@@ -1747,26 +1768,30 @@ Created a new SharePoint Access Request:
 - At Risk Threshold: 75% of SLA duration
 
 ### Conclusion
+
 Fresh-request SLA initialization and High-to-Normal
 priority recalculation passed functional validation.
 
 ### Remaining V2 Work
+
 - Cross-flow interaction testing
 - Final dashboard and reporting review
 - Portfolio documentation and demonstration preparation
 
-
 ## October 10, 2026 — V2 Cross-Flow SLA Regression Validation
 
 ### Test Scenario
+
 Test request: Test - V2 SLA Regression
 
 Validated the interaction between three Power Automate flows:
+
 - Access Request - Initialize SLA
 - Access Request - Recalculate SLA Dates
 - Access Request - Complete SLA
 
 ### Test Execution
+
 1. Created a new SharePoint access request with High priority.
 2. Confirmed SLA initialization populated the deadline.
 3. Changed priority from High to Normal.
@@ -1776,6 +1801,7 @@ Validated the interaction between three Power Automate flows:
 7. Verified the subsequent flow execution did not repeat the update.
 
 ### Verified Results
+
 - Final Priority: Normal
 - SLA Due Date: October 12, 2026, 2:07 PM EDT
 - SLA At Risk Date: October 12, 2026, 2:07 AM EDT
@@ -1787,6 +1813,7 @@ Validated the interaction between three Power Automate flows:
 - Subsequent completion update: Skipped
 
 ### Conclusion
+
 Fresh-request initialization, priority recalculation,
 and successful SLA completion passed cross-flow
 functional regression testing.
@@ -1795,7 +1822,41 @@ The Complete SLA flow's condition prevented a
 repeated update during the subsequent trigger execution.
 
 ### Remaining V2 Work
+
 - Additional cross-flow and edge-case testing
 - Final dashboard and reporting review
 - Portfolio documentation and demonstration preparation
 
+## October 10, 2026 — Dashboard Metrics Automation Validation
+
+**Project:** Enterprise Operations Hub V2  
+**Flow:** Access Request - Update Dashboard Metrics  
+**Result:** PASSED
+
+### Test performed
+
+- Selected the existing SharePoint request **Test - HR Site Access**.
+- Changed Status from `Draft` to `Pending Approval`.
+- Confirmed Power Automate triggered automatically.
+- Verified the flow completed successfully in approximately 3 seconds.
+
+### Results
+
+| Metric           | Before | After |
+| ---------------- | -----: | ----: |
+| Total Requests   |     25 |    25 |
+| Pending Approval |      6 |     7 |
+| Approved         |      0 |     0 |
+| In Progress      |      1 |     1 |
+| Completed        |      7 |     7 |
+| Overdue          |      6 |     6 |
+
+### Validation outcome
+
+Confirmed that a SharePoint request status change successfully triggers the dashboard metrics flow and updates the Request Metrics list.
+
+### Follow-up
+
+- Clarify whether the Approved metric should count overall request Status or Approval Decision.
+- Review flow scalability and SharePoint pagination considerations.
+- Continue dashboard integration and V2 testing.
