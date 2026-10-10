@@ -1722,3 +1722,36 @@ Circular-loop protection demonstrated through skipped update actions in subseque
 - Final dashboard and reporting review
 - Portfolio documentation and demonstration preparation
 
+
+## 2026-10-10 — V2 Fresh-Request SLA Regression Validation
+
+### Test Scenario
+Created a new SharePoint Access Request:
+- Request Title: Test - V2 SLA Regression
+- Initial Priority: High
+- Request Status: Submitted
+
+### Validation Performed
+1. Confirmed SLA initialization populated the initial deadline.
+2. Changed request priority from High to Normal.
+3. Verified the Recalculate SLA Dates flow executed successfully.
+4. Confirmed SLA policy lookup and date calculations succeeded.
+5. Verified the recalculated dates were saved to SharePoint.
+
+### Verified Results
+- Priority: Normal
+- SLA Due Date: October 12, 2026, 2:07 PM EDT
+- SLA At Risk Date: October 12, 2026, 2:07 AM EDT
+- SLA Status: Within SLA
+- Normal SLA Duration: 2 calendar days
+- At Risk Threshold: 75% of SLA duration
+
+### Conclusion
+Fresh-request SLA initialization and High-to-Normal
+priority recalculation passed functional validation.
+
+### Remaining V2 Work
+- Cross-flow interaction testing
+- Final dashboard and reporting review
+- Portfolio documentation and demonstration preparation
+
