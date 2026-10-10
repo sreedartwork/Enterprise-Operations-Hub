@@ -1676,3 +1676,49 @@ The Priority-change condition is intended to prevent repeated updates, but run h
 Priority recalculation: Functionally tested.
 Circular-loop protection: Verification pending.
 
+
+---
+
+## 2026-10-10 — V2 SLA Recalculation Validated
+
+### Test Objective
+Verify that changing the Priority of an existing Access Request recalculates SLA deadlines and updates SharePoint without causing repeated updates.
+
+### Test Request
+- Request ID: AR-00014
+- Title: Test - Request Created Activity 2
+- Original Priority: High
+- Updated Priority: Normal
+- Request Status: Draft
+
+### Results
+- Priority change detected successfully.
+- Matching Normal SLA policy retrieved.
+- SLA Due Date recalculated.
+- SLA At Risk Date recalculated.
+- SharePoint Update item action succeeded.
+- SLA Status remained Overdue, consistent with the historical request date.
+- Follow-up executions were observed stopping at the initial condition without updating the item.
+
+### Power Automate Verification
+The successful recalculation run showed green checkmarks for:
+- Get changes
+- Priority-change condition
+- Get items
+- Filter array
+- SLA policy selection
+- Calculate SLA Due Date
+- Calculate SLA At Risk Date
+- Update item
+
+### Conclusion
+Priority-based SLA recalculation validated for the tested High-to-Normal scenario.
+
+Circular-loop protection demonstrated through skipped update actions in subsequent executions.
+
+### Remaining Work
+- Fresh-request regression testing
+- Cross-flow interaction testing
+- Final dashboard and reporting review
+- Portfolio documentation and demonstration preparation
+
