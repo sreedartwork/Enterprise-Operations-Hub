@@ -1635,3 +1635,44 @@ and Power Automate. All four SLA states have now been demonstrated.
 ### Outcome
 PASS — Automated overdue detection, SharePoint status update, and email escalation validated end-to-end.
 
+
+---
+
+## 2026-10-10 — V2 SLA Priority Recalculation Testing
+
+### Objective
+Validate automatic SLA recalculation when an existing SharePoint Access Request changes Priority.
+
+### Work Completed
+- Configured the Access Request - Recalculate SLA Dates flow.
+- Used SharePoint Get changes to detect Priority modifications.
+- Added a condition to exclude Completed requests.
+- Retrieved the matching SLA policy.
+- Calculated the SLA Due Date and SLA At Risk Date.
+- Updated the SharePoint request with recalculated deadlines.
+- Added SLA Status classification for Within SLA, At Risk, and Overdue.
+
+### Successful Test
+Test item: Test - Request Created Activity 2
+
+- Priority changed to High.
+- Power Automate execution succeeded.
+- SharePoint displayed updated SLA dates.
+- SLA Status displayed Overdue.
+- Confirmed priority-based SLA recalculation works for the tested request.
+
+### Outstanding Verification
+Power Automate previously warned about a potential circular trigger loop.
+
+The Priority-change condition is intended to prevent repeated updates, but run history must still be reviewed to confirm this behavior.
+
+### Next Session
+1. Review Power Automate run history.
+2. Verify circular-loop protection.
+3. Test priority recalculation on a fresh request.
+4. Complete regression testing and final documentation.
+
+### Status
+Priority recalculation: Functionally tested.
+Circular-loop protection: Verification pending.
+
