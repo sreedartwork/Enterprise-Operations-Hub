@@ -1969,3 +1969,69 @@ The dashboard uses SharePoint list data maintained by Power Automate rather than
 - Complete final dashboard and workflow regression testing.
 - Review performance and pagination considerations.
 - Prepare portfolio screenshots, architecture documentation, and a demonstration walkthrough.
+
+## 2026-10-10 — V2 Published Operations Dashboard End-to-End Validation
+
+### Objective
+
+Verify that changes to SharePoint Access Requests automatically update the Request Metrics list and are reflected on the published Enterprise Operations Hub homepage.
+
+### Test Environment
+
+- **Project:** Enterprise Operations Hub V2
+- **SharePoint List:** Access Requests
+- **Metrics List:** Request Metrics
+- **Power Automate Flow:** Access Request - Update Dashboard Metrics
+- **Test Request:** Test - V2 SLA Regression
+- **Dashboard:** Enterprise Operations Hub homepage
+
+### Test Procedure
+
+1. Opened the published Enterprise Operations Hub homepage.
+2. Verified the initial dashboard metrics.
+3. Opened the existing Test - V2 SLA Regression request.
+4. Confirmed the request had Priority = Normal, Status = Completed, and SLA Status = Met.
+5. Changed Approval Decision from Pending to Approved.
+6. Saved the SharePoint request.
+7. Refreshed the published Operations Dashboard.
+8. Compared the updated metrics against the baseline.
+
+### Verified Results
+
+| Metric           | Before | After | Result |
+| ---------------- | -----: | ----: | ------ |
+| Total Requests   |     25 |    25 | PASS   |
+| Pending Approval |      7 |     7 | PASS   |
+| Approved         |      3 |     4 | PASS   |
+| In Progress      |      1 |     1 | PASS   |
+| Completed        |      7 |     7 | PASS   |
+| Overdue          |      6 |     6 | PASS   |
+
+### Validation Outcome
+
+**PASS — Published Operations Dashboard functional validation.**
+
+Confirmed that changing the Approval Decision on an existing SharePoint request resulted in the expected increase in the Approved metric, from 3 to 4.
+
+All other dashboard metrics remained unchanged.
+
+This demonstrates the functional integration between SharePoint request data, the dashboard metrics automation, the Request Metrics list, and the published SharePoint homepage.
+
+### Technical Notes
+
+- Approved requests are counted using the ApprovalDecision field rather than the request Status field.
+- The test request retained its Completed status and Normal priority during the test.
+- The test verifies the dashboard's visible result; separate run-history inspection would be needed to document the specific Power Automate execution.
+- The test used an existing completed request for technical validation, not as an example of the intended production approval sequence.
+
+### Remaining Improvements
+
+- Review SharePoint Get items pagination and performance considerations.
+- Review approval-workflow consistency and field validation.
+- Consider a more visual KPI dashboard presentation.
+- Complete final V2 regression testing.
+- Prepare portfolio documentation and demonstration materials.
+
+### Status
+
+**Published dashboard end-to-end functional test: PASSED.**
