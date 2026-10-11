@@ -44,7 +44,7 @@ Power Automate
 Approval Process
     ↓
 IT / M365 Administration
-`````
+```
 
 Future versions may expand the architecture with:
 
@@ -343,7 +343,6 @@ The next phase is:
 The first implementation target will be the:
 
 **SharePoint Access / Permission Change Request**
-
 
 ## September 2026 — Access Requests SharePoint List Implemented
 
@@ -670,7 +669,6 @@ Both the **Approved** and **Rejected** workflow paths have been successfully tes
 
 Build the fulfillment stage for approved requests so that an administrator can process the authorized SharePoint access change and record the fulfillment details.
 
-
 ---
 
 ## September 16, 2026 — My Requests View and Published App Validation
@@ -750,8 +748,6 @@ Continue refining the My Requests experience and then build the fulfillment stag
 `Approved → In Progress → Completed`
 
 The fulfillment stage will remain separate from approval so that authorization and administrative execution maintain distinct audit records.
-
-
 
 ## September 17, 2026 — Administrator Fulfillment Lifecycle Completed
 
@@ -948,7 +944,6 @@ Core V1 functionality has been validated:
 
 Save and publish the validated Power Apps version, perform the final end-to-end V1 test, and prepare the project for its V1 portfolio release.
 
-
 ## September 21, 2026 — V1 Published and Live Application Validated
 
 ### Objective
@@ -1131,3 +1126,986 @@ The design separates the current state of a request from its activity history, a
 
 Complete and validate the existing `Access Request Activity` Power Automate flow, including status-change detection and automated event creation.
 
+
+## 2026-09-28 — V2 Dashboard Metrics Architecture
+
+- Began development of the Operations Dashboard in Power Apps.
+- Identified SharePoint delegation warnings caused by using `CountRows()` against the Access Requests list.
+- Decided to correct the underlying architecture rather than leave delegation warnings in the application.
+- Created a SharePoint `Request Metrics` list to store dashboard totals for Total Requests, Pending Approval, Approved, In Progress, and Completed.
+- Began building the `Access Request - Update Dashboard Metrics` Power Automate flow.
+- Configured the flow to trigger when an item is created or modified in the `Access Requests` list.
+- Next step: retrieve Access Requests with the SharePoint `Get items` action and calculate/update the dashboard metrics.
+
+## 2026-09-29 — V2 Dashboard Metrics Automation
+
+- Built the `Access Request - Update Dashboard Metrics` Power Automate flow.
+- Configured the flow to run when an item is created or modified in the SharePoint `Access Requests` list.
+- Added server-side OData queries for Pending Approval, Approved, In Progress, and Completed request statuses.
+- Added retrieval of total Access Requests and the `Dashboard Metrics` record from the `Request Metrics` SharePoint list.
+- Added an Update Item action to write calculated request counts into the dashboard metrics record.
+- Configured Power Automate expressions to calculate Total Requests, Pending Approval, Approved, In Progress, and Completed counts.
+- Next step: test the automation end-to-end and connect the Power Apps Operations Dashboard to the Request Metrics data.
+
+## 2026-09-30 — V2 Operations Dashboard Metrics Completed
+
+- Completed and tested the Operations Dashboard metrics architecture.
+- Connected the Power Apps dashboard to the SharePoint `Request Metrics` list.
+- Replaced direct `CountRows()` calculations against `Access Requests` with precomputed metrics retrieved using `LookUp()`.
+- Eliminated Power Apps delegation warnings from Total Requests, Pending Approval, Approved, In Progress, and Completed dashboard metrics.
+- Added `Refresh('Request Metrics')` to `OperationsDashboardScreen.OnVisible` so the dashboard retrieves current metrics whenever the screen is opened.
+- Performed an end-to-end status transition test from Pending Approval → Approved and verified the dashboard metrics updated correctly.
+- Enabled pagination on the Power Automate `Get Total Requests` action with a 5,000-item threshold to provide a defined scaling boundary for the current V2 implementation.
+- Retested the automation after enabling pagination using an Approved → In Progress transition.
+- Verified the final SharePoint metrics: Total Requests = 10, Pending Approval = 0, Approved = 0, In Progress = 1, Completed = 2.
+- Confirmed the complete pipeline: Access Requests → Power Automate → Request Metrics → Power Apps Operations Dashboard.
+- Documented the remaining Power Automate performance advisory: `Get Total Requests` intentionally retrieves the complete request set, so the current V2 design has a documented 5,000-item aggregation boundary.
+
+---
+
+## October 2, 2026 — V2 Recent Activity and Dashboard Automation
+
+### Recent Activity Pipeline Validated
+
+Continued development of the V2 Operations Dashboard and validated the Recent Activity architecture end-to-end.
+
+Current activity pipeline:
+
+**Access Requests → Power Automate → Request Activity → Power Apps Operations Dashboard**
+
+Validated that meaningful request status changes automatically create activity-history records and appear in the Power Apps Recent Activity gallery.
+
+Successfully tested:
+
+- Approved
+- Rejected
+- In Progress
+- Completed
+- Pending Approval
+
+A negative test also confirmed that editing an unrelated field without changing Status does not create an activity-history event.
+
+### Dashboard Refresh Improved
+
+Updated `OperationsDashboardScreen.OnVisible` to refresh both dashboard data sources:
+
+````powerfx
+Refresh('Request Activity');
+Refresh('Request Metrics');
+
+
+### 2. Save it
+
+Press:
+
+**Ctrl + O**
+
+Then press **Enter** to confirm the filename.
+
+Then:
+
+**Ctrl + X**
+
+to exit Pico.
+
+### 3. Immediately check Git
+
+Run:
+
+```bash
+git status
+
+## V2 — SLA and Priority Requirements Design — 2026-10-03
+
+### Design Decisions
+- Priority belongs to the Access Request as part of its operational state. The Operations Dashboard displays and acts on this data but does not own it.
+- Initial priority should be determined from request type/business rules rather than relying solely on requester-selected urgency.
+- Priority will determine the applicable SLA target.
+- Authorized administrators/technicians may override priority when business circumstances change.
+- Priority overrides should preserve the previous priority, new priority, actor, timestamp, and reason in the audit/activity history.
+- Override reasons should use standardized selections where possible, with an **Other** option for a custom explanation.
+- Changing priority should recalculate the applicable SLA deadline.
+- Approval and fulfillment are separate operational responsibilities. Future SLA design should distinguish time waiting for authorization from fulfillment performance.
+- The previous operational workflow of repeated approval follow-ups and eventual closure when approval is not received will inform future approval-SLA design but is not yet an implemented V2 rule.
+- Completing a request should stop the SLA clock while preserving the final SLA result (**Met** or **Breached**) for historical auditing and reporting.
+- Preserved SLA results can later support reporting such as SLA compliance percentage, resolution time, breaches by priority/request type, and escalation trends.
+
+### Planned Implementation
+Request Type → Priority → SLA Due Date → SLA Status → Operations Dashboard indicators
+
+**Status:** DESIGN / PLANNED — not yet implemented.
+
+## 2026-10-04 — V2 SLA Initialization and Policy-Driven Automation
+
+### Completed
+- Created the `SLA Policies` SharePoint configuration list.
+- Defined configurable SLA policies for Critical, High, Normal, and Low priorities.
+- Separated SLA target duration from duration unit and At Risk threshold.
+- Created the `Access Request - Initialize SLA` Power Automate flow.
+- Configured the flow to retrieve the SLA policy matching the Access Request priority.
+- Added validation to confirm a matching SLA policy was returned.
+- Configured the flow to preserve unrelated Access Request business state rather than overwrite approval, fulfillment, status, or cancellation data.
+- Configured SLA initialization to set `SLA Status` to `Within SLA`.
+- Implemented automatic SLA Due Date calculation using the request Created timestamp and the Target Duration retrieved from `SLA Policies`.
+- Successfully validated the Normal-priority SLA initialization with test request `AR-00019`.
+
+### Architecture Decisions
+- SLA business rules are stored in `SLA Policies` rather than hard-coded into Power Automate.
+- Power Automate is responsible for orchestration; SharePoint configuration data defines the SLA policy.
+- Changing an SLA target should be a configuration change rather than require redesigning the automation.
+- The SLA initialization flow owns SLA initialization fields and preserves unrelated request state.
+- SLA initialization and SLA monitoring are separate responsibilities.
+- A request can become overdue solely because time passes, so overdue detection should not depend only on item-created or item-modified triggers.
+
+### Next
+- Build a scheduled SLA evaluation flow.
+- Detect requests approaching their At Risk threshold.
+- Detect overdue requests.
+- Update SLA Status without modifying unrelated request state.
+- Surface At Risk and Overdue requests on the Operations Dashboard.
+Great. Now paste this **directly underneath the existing `### Next` section**. This records what we actually built and validated after that plan.
+
+```markdown
+## 2026-10-04 — V2 Scheduled SLA Evaluation and Overdue Dashboard Indicator
+
+### Completed
+
+Continued development of the V2 SLA capability by implementing time-driven SLA monitoring and surfacing overdue requests on the Operations Dashboard.
+
+Created and validated the scheduled Power Automate flow:
+
+`Access Request - Evaluate SLA`
+
+The flow runs once per hour and evaluates active Access Requests to determine whether their SLA deadline has passed.
+
+### Scheduled SLA Evaluation Architecture
+
+The evaluation process follows:
+
+Access Requests → Scheduled Power Automate Evaluation → SLA Status Update
+
+The flow retrieves requests using the following filter:
+
+```text
+Status ne 'Completed' and Status ne 'Rejected' and Status ne 'Cancelled'
+````
+
+This prevents terminal requests from being unnecessarily evaluated during each scheduled run.
+
+For each remaining request, the flow evaluates whether:
+
+- `SLA Due Date` contains a value.
+- `SLA Due Date` is earlier than the current time.
+- The request remains in an active operational state.
+
+When these conditions are satisfied, the flow updates:
+
+```text
+SLA Status = Overdue
+```
+
+The flow preserves unrelated request fields and business state.
+
+### Architecture Decision — Time-Driven Evaluation
+
+SLA monitoring was intentionally separated from SLA initialization.
+
+The initialization flow determines the original SLA deadline when a request is created.
+
+The scheduled evaluation flow determines whether that deadline has subsequently been exceeded.
+
+This separation is necessary because a request can become overdue simply because time passes. No SharePoint item modification is required for an SLA breach to occur.
+
+### Dashboard Metrics Extended
+
+Extended the existing:
+
+`Access Request - Update Dashboard Metrics`
+
+flow with a new:
+
+`Get Overdue Requests`
+
+aggregation step.
+
+The dashboard metrics pipeline now includes overdue-request information:
+
+Access Requests → Power Automate → Request Metrics → Power Apps Operations Dashboard
+
+The `Request Metrics` SharePoint list was extended to store the current Overdue count.
+
+During implementation, the Overdue query initially failed because the SharePoint display name was mistaken for the column's internal name.
+
+The correct internal field name was identified as:
+
+```text
+SLA_x0020_Status
+```
+
+The working OData query is:
+
+```text
+SLA_x0020_Status eq 'Overdue'
+```
+
+The detailed troubleshooting process is documented separately in `DEBUGGING_JOURNAL.md`.
+
+### Power Apps Operations Dashboard Updated
+
+Added an `Overdue` KPI to the Operations Dashboard.
+
+The dashboard now displays:
+
+- Total Requests
+- Pending Approval
+- Approved
+- In Progress
+- Completed
+- Overdue
+
+The Overdue value is retrieved from the precomputed `Request Metrics` data rather than calculated directly against the operational `Access Requests` list in Power Apps.
+
+This preserves the existing V2 architecture in which aggregation responsibility remains outside the presentation layer.
+
+### Validation
+
+End-to-end testing confirmed:
+
+- The scheduled SLA evaluation flow runs successfully.
+- Active requests with expired SLA Due Dates can be marked `Overdue`.
+- Terminal requests are excluded from scheduled SLA evaluation.
+- The dashboard metrics flow successfully counts overdue requests.
+- `Request Metrics` stored `Overdue = 1`.
+- Power Apps successfully retrieved the updated metric.
+- The Operations Dashboard displayed `1 Overdue`.
+- Existing Total, Pending Approval, Approved, In Progress, and Completed metrics continued functioning.
+
+### Architecture Learning
+
+This implementation separates five distinct responsibilities:
+
+1. `Access Requests` stores current operational request state.
+2. SLA initialization assigns the applicable deadline.
+3. Scheduled SLA evaluation detects time-based SLA breaches.
+4. Power Automate aggregates operational metrics into `Request Metrics`.
+5. Power Apps presents the resulting operational information.
+
+This prevents the Power Apps interface from becoming responsible for business-rule execution, time-based monitoring, and large-scale aggregation.
+
+### Current V2 Status
+
+The following V2 dashboard capabilities are now implemented and validated:
+
+- Precomputed operational KPI metrics
+- Recent Activity history
+- SLA initialization
+- Scheduled overdue evaluation
+- Overdue request aggregation
+- Overdue KPI presentation
+
+Remaining V2 development includes:
+
+- At Risk SLA evaluation
+- Additional filtering
+- Notifications
+- Reporting / Power BI integration
+- Additional request-management metrics
+- Documentation, testing, and final interface refinement
+
+```
+
+This entry is important because it shows that we're no longer just building individual Power Automate flows. We're documenting **why responsibilities are separated across the architecture**—which is exactly the kind of reasoning you want to be able to explain in an engineer/architect interview.
+
+Once you've pasted and saved that, tell me **done**. Then we'll decide whether to document the Power Apps formula issue separately or move forward.
+```
+
+## 2026-10-05 — SLA Evaluator Validation
+
+### Completed
+
+- Completed the Power Automate `Access Request - Evaluate SLA` flow.
+- Configured scheduled evaluation of Access Requests.
+- Implemented SLA status evaluation using:
+  - SLA Due Date
+  - SLA At Risk Date
+  - Current UTC time
+- Preserved existing SharePoint item values during automated updates.
+- Validated the SLA state transitions:
+  - Within SLA
+  - At Risk
+  - Overdue
+
+### Testing
+
+Created `Test - SLA At Risk Immediate` with:
+
+- Priority: Normal
+- SLA Due Date: October 6, 2026
+- SLA At Risk Date: October 5, 2026
+
+Manually ran the SLA evaluator and confirmed:
+
+- The request entered the At Risk conditional branch.
+- The SharePoint Update Item action executed successfully.
+- SLA Status changed from `Within SLA` to `At Risk`.
+
+### Result
+
+The Enterprise Operations Hub can now automatically evaluate active access
+requests and update their SLA status as deadlines approach or pass.
+
+### Next
+
+- Add SLA notifications and escalation logic for At Risk and Overdue requests.
+
+### SLA At Risk Notification Validation
+
+Added an Outlook notification to the `Access Request - Evaluate SLA` flow for requests that enter the `At Risk` state.
+
+The notification includes:
+
+- Request ID
+- Request Title
+- Priority
+- SLA Status
+- SLA At Risk Date
+- SLA Due Date
+
+Validation performed using request `AR-00020` (`Test - SLA At Risk Normal`).
+
+Confirmed the complete automation path:
+
+1. Scheduled SLA evaluator retrieved the active request.
+2. Overdue condition evaluated False.
+3. At Risk condition evaluated True.
+4. SharePoint `Update item` completed successfully.
+5. Outlook `Send an email (V2)` completed successfully.
+6. SLA alert email was delivered to the Microsoft 365 mailbox.
+
+Result: SLA At Risk notification functionality is working end-to-end.
+
+Future polish:
+
+- Format SLA dates from UTC/ISO format into a user-friendly local date/time format.
+- Consider role-based notification recipients instead of the current test mailbox.
+
+## 2026-10-07 — SLA Overdue Escalation & Duplicate Notification Prevention
+
+### Completed
+
+Enhanced the `Access Request - Evaluate SLA` flow to support SLA escalation while preventing repeated notifications during scheduled evaluations.
+
+Updated the Overdue condition to require:
+
+- SLA Due Date is not null.
+- SLA Due Date is earlier than the current UTC time.
+- SLA Status is not already `Overdue`.
+
+Updated the At Risk condition to require:
+
+- SLA At Risk Date is not null.
+- SLA At Risk Date is earlier than the current UTC time.
+- SLA Status is not already `At Risk`.
+
+### Overdue Escalation
+
+Added an Office 365 Outlook `Send an email (V2)` action to the Overdue branch.
+
+The escalation email includes:
+
+- Request ID
+- Request Title
+- Priority
+- SLA Status
+- SLA At Risk Date
+- SLA Due Date
+
+Overdue notifications are marked as High Importance.
+
+### Validation
+
+Validated the evaluator against test requests `AR-00020` and `AR-00021`.
+
+Confirmed the complete Overdue automation path:
+
+1. Scheduled SLA evaluator retrieved active requests.
+2. Due Date was compared with the current UTC time.
+3. Existing SLA Status was checked to prevent duplicate escalation.
+4. Eligible requests transitioned to `Overdue`.
+5. SharePoint `Update item` completed successfully.
+6. Outlook `Send an email (V2)` completed successfully.
+7. SLA Overdue escalation emails were delivered to the Microsoft 365 mailbox.
+
+Confirmed that subsequent evaluator runs do not resend the Overdue notification when the request already has an SLA Status of `Overdue`.
+
+### Result
+
+The SLA evaluator now supports controlled state transitions:
+
+`Within SLA → At Risk → Overdue`
+
+Notifications are tied to the transition into At Risk or Overdue rather than being repeatedly sent on every scheduled evaluator run.
+
+### Future Enhancements
+
+- Format SLA dates from UTC/ISO into a user-friendly local date/time format.
+- Add an operational priority/escalation queue for unresolved Overdue requests.
+- Track how long requests remain Overdue.
+- Define escalation behavior for requests that remain unresolved for multiple days.
+- Consider role-based notification recipients instead of the current test mailbox.
+
+## 2026-10-07 — SLA Notification & Duplicate Suppression Validation
+
+### Completed
+
+- Completed and validated automated SLA notifications in the Power Automate `Access Request - Evaluate SLA` flow.
+- Added Microsoft 365 Outlook email notifications for both SLA states:
+  - `At Risk`
+  - `Overdue`
+- Added state checks to prevent duplicate notifications during subsequent scheduled evaluator runs.
+- The Overdue branch now requires the current SLA Status to be different from `Overdue` before updating the request and sending an escalation.
+- The At Risk branch requires the current SLA Status to be different from `At Risk` before updating the request and sending an alert.
+
+### At Risk Validation
+
+Validated the At Risk path using `Test - SLA At Risk Normal` (AR-00020).
+
+Confirmed:
+
+- The Overdue condition evaluated False while the SLA Due Date was still in the future.
+- The At Risk condition evaluated True after the SLA At Risk Date passed.
+- SharePoint `Update item` completed successfully.
+- SLA Status changed to `At Risk`.
+- Microsoft 365 Outlook `Send an email (V2)` completed successfully.
+- The SLA At Risk alert was delivered to the Outlook inbox.
+
+### Overdue Validation
+
+After the SLA Due Date passed, confirmed:
+
+- The Overdue condition evaluated True.
+- SharePoint updated the request to `Overdue`.
+- The Outlook escalation action completed successfully.
+- The SLA Overdue escalation email was delivered to the Outlook inbox.
+- The escalation included the Request ID, request title, priority, SLA status, At Risk Date, and Due Date.
+
+### Duplicate Notification Suppression
+
+Ran the evaluator again after the requests had already reached their SLA states.
+
+Confirmed:
+
+- Requests already marked `Overdue` did not enter the Overdue update/notification branch again.
+- Requests already marked `At Risk` do not re-enter the At Risk update/notification branch while remaining in that state.
+- Update and email actions were skipped when the request was already in the corresponding SLA state.
+- No additional duplicate SLA emails were generated during the validation run.
+
+### Result
+
+The Enterprise Operations Hub SLA evaluator now supports state-aware SLA automation:
+
+`Within SLA -> At Risk -> Overdue`
+
+The evaluator can automatically update SharePoint request state, send Microsoft 365 Outlook notifications when SLA thresholds are crossed, and suppress repeated notifications on subsequent scheduled evaluations.
+
+### Follow-up
+
+- Format SLA timestamps into user-friendly local date/time values in notification emails.
+- Continue V2 reporting, metrics, testing, and documentation work.
+
+## 2026-10-08 — V2 SLA Completion Automation Validated
+
+### Completed
+
+- Successfully tested the Access Request - Complete SLA flow.
+- Created test request: Test - SLA Completion Before Deadline.
+- SharePoint Item ID: 22.
+- Confirmed SLA initialization assigned the Normal priority policy.
+- Verified SLA Due Date: 2026-10-10T04:22:47Z.
+- Verified SLA At Risk Date: 2026-10-09T16:22:47Z.
+- Changed request Status to Completed.
+- Confirmed Completed Date was automatically populated.
+- Confirmed SLA Status automatically changed from Within SLA to Met.
+- Verified completion occurred before the SLA deadline.
+
+### V2 SLA Lifecycle
+
+- Within SLA: Initial monitoring state.
+- At Risk: Approaching the SLA deadline.
+- Overdue: SLA deadline exceeded.
+- Met: Request completed within the SLA deadline.
+- Previously validated transition-based email alerts and duplicate suppression.
+
+### Result
+
+Successfully validated the SLA completion scenario through SharePoint
+and Power Automate. All four SLA states have now been demonstrated.
+
+### Next Steps
+
+- Continue V2 reporting and dashboard improvements.
+- Improve SLA date formatting in notification emails.
+- Expand automated testing and project documentation.
+
+## 2026-10-08 — V2 SLA Overdue Detection and Email Escalation Validated
+
+### Test Scenario
+
+- Request: Test - SLA Breached 9:10 PM
+- Request ID: AR-00024
+- SharePoint Item ID: 24
+- Priority: Critical
+- Request Status: Draft
+- SLA Due Date: October 8, 2026, 9:15 PM Eastern
+- Test method: Manually adjusted the SLA deadline to a past time, then observed the scheduled Evaluate SLA flow.
+
+### Verified Results
+
+- Access Request - Evaluate SLA completed successfully.
+- The scheduled flow evaluated 15 SharePoint items.
+- The condition for the test request followed the True branch.
+- Update item successfully wrote SLA Status = Overdue.
+- SharePoint independently displayed the request as Overdue.
+- Send an email (V2) completed successfully.
+- Outlook received the high-importance SLA escalation email at approximately 10:00 PM.
+- The escalation email correctly identified AR-00024, Critical priority, and Overdue status.
+- The request lifecycle Status remained Draft.
+
+### Follow-Up Improvements
+
+- Recalculate or validate the SLA At Risk Date when the SLA Due Date changes.
+- Format notification timestamps in Eastern Time rather than raw UTC.
+- Continue final edge-case testing and dashboard improvements.
+
+### Outcome
+
+PASS — Automated overdue detection, SharePoint status update, and email escalation validated end-to-end.
+
+---
+
+## 2026-10-10 — V2 SLA Priority Recalculation Testing
+
+### Objective
+
+Validate automatic SLA recalculation when an existing SharePoint Access Request changes Priority.
+
+### Work Completed
+
+- Configured the Access Request - Recalculate SLA Dates flow.
+- Used SharePoint Get changes to detect Priority modifications.
+- Added a condition to exclude Completed requests.
+- Retrieved the matching SLA policy.
+- Calculated the SLA Due Date and SLA At Risk Date.
+- Updated the SharePoint request with recalculated deadlines.
+- Added SLA Status classification for Within SLA, At Risk, and Overdue.
+
+### Successful Test
+
+Test item: Test - Request Created Activity 2
+
+- Priority changed to High.
+- Power Automate execution succeeded.
+- SharePoint displayed updated SLA dates.
+- SLA Status displayed Overdue.
+- Confirmed priority-based SLA recalculation works for the tested request.
+
+### Outstanding Verification
+
+Power Automate previously warned about a potential circular trigger loop.
+
+The Priority-change condition is intended to prevent repeated updates, but run history must still be reviewed to confirm this behavior.
+
+### Next Session
+
+1. Review Power Automate run history.
+2. Verify circular-loop protection.
+3. Test priority recalculation on a fresh request.
+4. Complete regression testing and final documentation.
+
+### Status
+
+Priority recalculation: Functionally tested.
+Circular-loop protection: Verification pending.
+
+---
+
+## 2026-10-10 — V2 SLA Recalculation Validated
+
+### Test Objective
+
+Verify that changing the Priority of an existing Access Request recalculates SLA deadlines and updates SharePoint without causing repeated updates.
+
+### Test Request
+
+- Request ID: AR-00014
+- Title: Test - Request Created Activity 2
+- Original Priority: High
+- Updated Priority: Normal
+- Request Status: Draft
+
+### Results
+
+- Priority change detected successfully.
+- Matching Normal SLA policy retrieved.
+- SLA Due Date recalculated.
+- SLA At Risk Date recalculated.
+- SharePoint Update item action succeeded.
+- SLA Status remained Overdue, consistent with the historical request date.
+- Follow-up executions were observed stopping at the initial condition without updating the item.
+
+### Power Automate Verification
+
+The successful recalculation run showed green checkmarks for:
+
+- Get changes
+- Priority-change condition
+- Get items
+- Filter array
+- SLA policy selection
+- Calculate SLA Due Date
+- Calculate SLA At Risk Date
+- Update item
+
+### Conclusion
+
+Priority-based SLA recalculation validated for the tested High-to-Normal scenario.
+
+Circular-loop protection demonstrated through skipped update actions in subsequent executions.
+
+### Remaining Work
+
+- Fresh-request regression testing
+- Cross-flow interaction testing
+- Final dashboard and reporting review
+- Portfolio documentation and demonstration preparation
+
+## 2026-10-10 — V2 Fresh-Request SLA Regression Validation
+
+### Test Scenario
+
+Created a new SharePoint Access Request:
+
+- Request Title: Test - V2 SLA Regression
+- Initial Priority: High
+- Request Status: Submitted
+
+### Validation Performed
+
+1. Confirmed SLA initialization populated the initial deadline.
+2. Changed request priority from High to Normal.
+3. Verified the Recalculate SLA Dates flow executed successfully.
+4. Confirmed SLA policy lookup and date calculations succeeded.
+5. Verified the recalculated dates were saved to SharePoint.
+
+### Verified Results
+
+- Priority: Normal
+- SLA Due Date: October 12, 2026, 2:07 PM EDT
+- SLA At Risk Date: October 12, 2026, 2:07 AM EDT
+- SLA Status: Within SLA
+- Normal SLA Duration: 2 calendar days
+- At Risk Threshold: 75% of SLA duration
+
+### Conclusion
+
+Fresh-request SLA initialization and High-to-Normal
+priority recalculation passed functional validation.
+
+### Remaining V2 Work
+
+- Cross-flow interaction testing
+- Final dashboard and reporting review
+- Portfolio documentation and demonstration preparation
+
+## October 10, 2026 — V2 Cross-Flow SLA Regression Validation
+
+### Test Scenario
+
+Test request: Test - V2 SLA Regression
+
+Validated the interaction between three Power Automate flows:
+
+- Access Request - Initialize SLA
+- Access Request - Recalculate SLA Dates
+- Access Request - Complete SLA
+
+### Test Execution
+
+1. Created a new SharePoint access request with High priority.
+2. Confirmed SLA initialization populated the deadline.
+3. Changed priority from High to Normal.
+4. Confirmed recalculation updated SLA dates using the Normal policy.
+5. Changed the request status to Completed before the deadline.
+6. Inspected the Complete SLA flow run history.
+7. Verified the subsequent flow execution did not repeat the update.
+
+### Verified Results
+
+- Final Priority: Normal
+- SLA Due Date: October 12, 2026, 2:07 PM EDT
+- SLA At Risk Date: October 12, 2026, 2:07 AM EDT
+- SLA Status: Met
+- Completed Date: Populated
+- Complete SLA primary run: Succeeded
+- Completion Update item action: Succeeded
+- Subsequent run: Initial condition evaluated False
+- Subsequent completion update: Skipped
+
+### Conclusion
+
+Fresh-request initialization, priority recalculation,
+and successful SLA completion passed cross-flow
+functional regression testing.
+
+The Complete SLA flow's condition prevented a
+repeated update during the subsequent trigger execution.
+
+### Remaining V2 Work
+
+- Additional cross-flow and edge-case testing
+- Final dashboard and reporting review
+- Portfolio documentation and demonstration preparation
+
+## October 10, 2026 — Dashboard Metrics Automation Validation
+
+**Project:** Enterprise Operations Hub V2  
+**Flow:** Access Request - Update Dashboard Metrics  
+**Result:** PASSED
+
+### Test performed
+
+- Selected the existing SharePoint request **Test - HR Site Access**.
+- Changed Status from `Draft` to `Pending Approval`.
+- Confirmed Power Automate triggered automatically.
+- Verified the flow completed successfully in approximately 3 seconds.
+
+### Results
+
+| Metric           | Before | After |
+| ---------------- | -----: | ----: |
+| Total Requests   |     25 |    25 |
+| Pending Approval |      6 |     7 |
+| Approved         |      0 |     0 |
+| In Progress      |      1 |     1 |
+| Completed        |      7 |     7 |
+| Overdue          |      6 |     6 |
+
+### Validation outcome
+
+Confirmed that a SharePoint request status change successfully triggers the dashboard metrics flow and updates the Request Metrics list.
+
+### Follow-up
+
+- Clarify whether the Approved metric should count overall request Status or Approval Decision.
+- Review flow scalability and SharePoint pagination considerations.
+- Continue dashboard integration and V2 testing.
+
+## October 10, 2026 — V2 Dashboard Approved Metrics Correction Validated
+
+**Project:** Enterprise Operations Hub V2  
+**Flow:** Access Request - Update Dashboard Metrics  
+**Result:** PASSED — Approved Requests filter correction
+
+### Issue Identified
+
+The Get Approved Requests action originally used the following OData filter:
+
+`Status eq 'Approved'`
+
+However, the Access Requests list does not contain Approved as a Status choice. Approval decisions are stored separately in the Approval Decision column.
+
+### Correction Implemented
+
+- Verified the SharePoint internal column name: `ApprovalDecision`.
+- Updated the Get Approved Requests filter to:
+
+  `ApprovalDecision eq 'Approved'`
+
+- Saved the Power Automate flow successfully.
+- Flow checker reported zero errors and one existing performance warning for Get Total Requests.
+
+### Test Performed
+
+1. Started a manual Power Automate test.
+2. Opened the existing SharePoint request: Test - HR Site Access.
+3. Changed Approval Decision from Pending to Approved.
+4. Saved the SharePoint request.
+5. Confirmed that the dashboard metrics flow executed successfully.
+6. Verified the updated values in the Request Metrics SharePoint list.
+
+### Verified Dashboard Metrics
+
+| Metric           | Result |
+| ---------------- | -----: |
+| Total Requests   |     25 |
+| Pending Approval |      7 |
+| Approved         |      3 |
+| In Progress      |      1 |
+| Completed        |      7 |
+| Overdue          |      6 |
+
+### Validation Outcome
+
+**PASS:** The corrected OData filter executed successfully, and the Approved metric increased from 0 to 3.
+
+The dashboard now counts requests based on their Approval Decision rather than their overall request Status.
+
+### Remaining Work
+
+- Complete dashboard integration and presentation.
+- Validate reporting behavior across additional request scenarios.
+- Review pagination and scalability considerations.
+- Complete final V2 regression testing and portfolio documentation.
+
+## October 10, 2026 — V2 Operations Dashboard Published
+
+**Project:** Enterprise Operations Hub V2  
+**Platform:** SharePoint Online  
+**Status:** PASSED — Dashboard integration and publication
+
+### Objective
+
+Integrate the existing automated Request Metrics list into the Enterprise Operations Hub homepage to provide centralized operational reporting.
+
+### Work Completed
+
+- Opened the Enterprise Operations Hub homepage in SharePoint Edit mode.
+- Created a new one-column section beneath Request Access and Track Requests.
+- Added the **Operations Dashboard** heading using Heading 2 formatting.
+- Inserted the native SharePoint List web part.
+- Connected the web part to the existing Request Metrics list.
+- Verified that all six metric fields were displayed.
+- Published the updated SharePoint homepage.
+
+### Verified Dashboard Metrics
+
+| Metric           | Value |
+| ---------------- | ----: |
+| Total Requests   |    25 |
+| Pending Approval |     7 |
+| Approved         |     3 |
+| In Progress      |     1 |
+| Completed        |     7 |
+| Overdue          |     6 |
+
+### Architecture
+
+**Access Requests (SharePoint List)**  
+→ **Access Request - Update Dashboard Metrics (Power Automate)**  
+→ **Request Metrics (SharePoint List)**  
+→ **Operations Dashboard (SharePoint Homepage)**
+
+### Validation Outcome
+
+**PASS:** The published SharePoint homepage successfully displays the existing Request Metrics data through the native List web part.
+
+The dashboard uses SharePoint list data maintained by Power Automate rather than manually entered values.
+
+### Remaining Work
+
+- Verify that subsequent request changes are reflected on the published homepage.
+- Consider replacing the table layout with visual KPI cards.
+- Complete final dashboard and workflow regression testing.
+- Review performance and pagination considerations.
+- Prepare portfolio screenshots, architecture documentation, and a demonstration walkthrough.
+
+## 2026-10-10 — V2 Published Operations Dashboard End-to-End Validation
+
+### Objective
+
+Verify that changes to SharePoint Access Requests automatically update the Request Metrics list and are reflected on the published Enterprise Operations Hub homepage.
+
+### Test Environment
+
+- **Project:** Enterprise Operations Hub V2
+- **SharePoint List:** Access Requests
+- **Metrics List:** Request Metrics
+- **Power Automate Flow:** Access Request - Update Dashboard Metrics
+- **Test Request:** Test - V2 SLA Regression
+- **Dashboard:** Enterprise Operations Hub homepage
+
+### Test Procedure
+
+1. Opened the published Enterprise Operations Hub homepage.
+2. Verified the initial dashboard metrics.
+3. Opened the existing Test - V2 SLA Regression request.
+4. Confirmed the request had Priority = Normal, Status = Completed, and SLA Status = Met.
+5. Changed Approval Decision from Pending to Approved.
+6. Saved the SharePoint request.
+7. Refreshed the published Operations Dashboard.
+8. Compared the updated metrics against the baseline.
+
+### Verified Results
+
+| Metric           | Before | After | Result |
+| ---------------- | -----: | ----: | ------ |
+| Total Requests   |     25 |    25 | PASS   |
+| Pending Approval |      7 |     7 | PASS   |
+| Approved         |      3 |     4 | PASS   |
+| In Progress      |      1 |     1 | PASS   |
+| Completed        |      7 |     7 | PASS   |
+| Overdue          |      6 |     6 | PASS   |
+
+### Validation Outcome
+
+**PASS — Published Operations Dashboard functional validation.**
+
+Confirmed that changing the Approval Decision on an existing SharePoint request resulted in the expected increase in the Approved metric, from 3 to 4.
+
+All other dashboard metrics remained unchanged.
+
+This demonstrates the functional integration between SharePoint request data, the dashboard metrics automation, the Request Metrics list, and the published SharePoint homepage.
+
+### Technical Notes
+
+- Approved requests are counted using the ApprovalDecision field rather than the request Status field.
+- The test request retained its Completed status and Normal priority during the test.
+- The test verifies the dashboard's visible result; separate run-history inspection would be needed to document the specific Power Automate execution.
+- The test used an existing completed request for technical validation, not as an example of the intended production approval sequence.
+
+### Remaining Improvements
+
+- Review SharePoint Get items pagination and performance considerations.
+- Review approval-workflow consistency and field validation.
+- Consider a more visual KPI dashboard presentation.
+- Complete final V2 regression testing.
+- Prepare portfolio documentation and demonstration materials.
+
+### Status
+
+**Published dashboard end-to-end functional test: PASSED.**
+
+## V2 — Step 41: SLA Integrity Verification
+
+**Date:** October 11, 2026
+**Result:** PASS — tested request retained its SLA values
+
+### Test Objective
+
+Confirm that changing Approval Decision from Pending to Approved for the completed `Test - V2 SLA Regression` request did not overwrite its previously recorded SLA information.
+
+### Verified Values
+
+- Status: Completed
+- Approval Decision: Approved
+- Priority: Normal
+- SLA Status: Met
+- SLA Due Date: October 12, 2026, 2:07 PM
+- SLA At Risk Date: October 12, 2026, 2:07 AM
+- Completed Date: October 10, 2026, 2:26 PM
+
+### Verification Method
+
+Opened the existing SharePoint Access Requests item in its detail view and inspected the fields. Captured screenshots on October 11, 2026. No additional edits were made.
+
+### Outcome
+
+The recorded SLA status and dates matched the pre-test values. The approval-decision change did not visibly alter the completed request's SLA outcome in this tested scenario.
+
+### Limitations
+
+This verifies one completed request after one approval-decision change. It does not establish behavior under concurrent updates or all possible workflow transitions.
+
+### Next Step
+
+Continue V2 release closeout with a formal regression test matrix and documentation review.

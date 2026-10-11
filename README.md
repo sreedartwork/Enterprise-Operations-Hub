@@ -6,7 +6,11 @@ An enterprise-style Microsoft 365 request-management solution built with **Share
 
 The Enterprise Operations Hub demonstrates a complete SharePoint access-request lifecycle—from employee submission and approval through administrator fulfillment and completion.
 
-> **V1 Status: Published and validated end-to-end**
+**V1 Status:** Published and validated end-to-end
+
+**V2 Status:** Release validation — 12 regression tests PASS, 1 PENDING.
+
+**Deployment scope:** Portfolio/development demonstration. SharePoint data-layer permissions require additional validation before production use.
 
 ## V1 Highlights
 
@@ -22,6 +26,111 @@ The Enterprise Operations Hub demonstrates a complete SharePoint access-request 
 - SharePoint Person-field integration
 - Published Power Apps application validated through live testing
 - Project, architecture, requirements, and debugging documentation
+
+## V2 — Operations Management and SLA Automation
+
+V2 expands Enterprise Operations Hub with operational reporting, SLA management, notifications, activity tracking, and regression testing.
+
+### Published Operations Dashboard
+
+The published SharePoint homepage displays six operational metrics:
+
+- Total Requests
+- Pending Approval
+- Approved
+- In Progress
+- Completed
+- Overdue
+
+**Architecture:**
+
+Access Requests → Power Automate → Request Metrics → SharePoint Dashboard
+
+Power Automate calculates request metrics and stores the results in the SharePoint Request Metrics list. The homepage displays these values using a SharePoint list web part.
+
+![Published V2 Operations Dashboard](screenshots/v2/operations-dashboard-published.png)
+
+Dashboard validation confirmed that the Approved metric increased after a qualifying request change while unrelated metrics remained unchanged in the tested scenario.
+
+The current total-request aggregation has a documented 5,000-item pagination boundary. Larger-scale optimization is deferred to V3.
+
+### Dashboard Architecture Decision
+
+During development, direct Power Apps calculations against the
+SharePoint Access Requests list produced delegation warnings.
+
+To avoid relying on potentially incomplete client-side calculations,
+the reporting architecture was refactored to calculate request metrics
+through Power Automate and store the results in SharePoint.
+
+This separates metric aggregation from the presentation layer and
+provides a foundation for future reporting improvements.
+
+### SLA Management
+
+V2 includes four SharePoint-backed SLA policies:
+
+| Priority | SLA Target |
+|---|---|
+| Critical | 1 hour |
+| High | 4 hours |
+| Normal | 2 days |
+| Low | 5 days |
+
+SLA calculations use calendar elapsed time.
+
+Implemented Power Automate workflows support:
+
+- SLA initialization
+- SLA recalculation after relevant changes
+- Scheduled At Risk and Overdue evaluation
+- SLA completion and outcome recording
+- At Risk and Overdue email notifications
+
+Documented tests validated SLA initialization, recalculation, successful completion, overdue detection, and suppression of repeated notifications or updates in tested scenarios.
+
+### Request Activity and Fulfillment
+
+The Request Activity SharePoint list records relevant request status transitions.
+
+Testing confirmed that status changes generated activity records while unrelated field updates did not generate unnecessary status-change events.
+
+The approval workflow supports approved and rejected outcomes.
+
+Administrators can manually document request assignment, fulfillment, and completion.
+
+Actual SharePoint permission grants were not independently verified during fulfillment testing.
+
+### Regression Validation
+
+The V2 regression matrix currently records:
+
+- **12 PASS**
+- **1 PENDING**
+- **0 FAIL**
+
+The remaining pending scenario, V2-012, concerns SharePoint data-layer permissions.
+
+Power Apps includes role-aware requester and administrator interfaces. However, SharePoint item-level access restrictions have not been fully implemented or verified.
+
+Application-level filtering does not replace data-layer authorization.
+
+**V2 is a portfolio/development demonstration and is not production-ready for sensitive access-request information.**
+
+See the [V2 Regression Test Matrix](docs/testing/V2_REGRESSION_TEST_MATRIX.md) for documented scenarios, evidence, and limitations.
+
+### V3 Roadmap
+
+Potential future improvements include:
+
+- SharePoint data-layer security and multi-account testing
+- Advanced concurrency and duplicate-processing protection
+- Expanded failure handling and monitoring
+- Large-list performance optimization
+- Graphical KPI cards and richer analytics
+- Deployment automation and governance enhancements
+
+These are future enhancements, not verified V2 functionality.
 
 ## Project Objective
 
@@ -221,8 +330,13 @@ Enterprise Operations Hub V1 demonstrates hands-on experience with:
 Detailed project documentation is available in the `docs/` directory.
 
 - [V1 Architecture](docs/architecture/v1-sharepoint-architecture.md)
+- [V2 Solution Architecture](docs/architecture/v2-solution-architecture.md)
 - [SharePoint Access Request Requirements](docs/requirements/sharepoint-access-request-requirements.md)
 - [Access Requests List Design](docs/sharepoint/access-requests-list-design.md)
+- [V2 Operations Dashboard Requirements](docs/requirements/v2-operations-dashboard-requirements.md)
+- [Dashboard Metrics Architecture](docs/architecture/dashboard-metrics-architecture.md)
+- [Dashboard Metrics and Scalability Learning Notes](docs/learning-notes/dashboard-metrics-and-scalability.md)
+- [V2 Regression Test Matrix](docs/testing/V2_REGRESSION_TEST_MATRIX.md)
 - [Project Journal](PROJECT_JOURNAL.md)
 - [Debugging Journal](DEBUGGING_JOURNAL.md)
 
@@ -243,6 +357,7 @@ Enterprise-Operations-Hub/
 │   ├── powershell/
 │   ├── graph/
 │   ├── governance/
+│   ├── learning-notes/
 │   ├── testing/
 │   └── environment-setup.md
 ├── screenshots/
