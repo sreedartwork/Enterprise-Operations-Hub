@@ -330,6 +330,7 @@ Enterprise Operations Hub V1 demonstrates hands-on experience with:
 Detailed project documentation is available in the `docs/` directory.
 
 - [V1 Architecture](docs/architecture/v1-sharepoint-architecture.md)
+- [V2 Solution Architecture](docs/architecture/v2-solution-architecture.md)
 - [SharePoint Access Request Requirements](docs/requirements/sharepoint-access-request-requirements.md)
 - [Access Requests List Design](docs/sharepoint/access-requests-list-design.md)
 - [V2 Operations Dashboard Requirements](docs/requirements/v2-operations-dashboard-requirements.md)

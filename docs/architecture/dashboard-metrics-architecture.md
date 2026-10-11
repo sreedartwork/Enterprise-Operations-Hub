@@ -11,6 +11,7 @@ The dashboard displays:
 - Approved
 - In Progress
 - Completed
+- Overdue
 
 ## Original Design
 
@@ -43,17 +44,17 @@ Request Metrics
       |
       | precomputed values
       v
-Power Apps Operations Dashboard
+SharePoint Homepage — Request Metrics List Web Part
 ```
 
 This separates two responsibilities:
 
 - Power Automate performs the aggregation.
-- Power Apps presents the already-calculated results.
+- The published SharePoint homepage presents the precomputed results through a Request Metrics list web part.
 
 Power Automate calculates the metrics and writes them to the dedicated SharePoint `Request Metrics` list.
 
-Power Apps retrieves those values using formulas such as:
+In the earlier Power Apps dashboard implementation, Power Apps retrieved those values using formulas such as:
 
 ```powerfx
 LookUp(
@@ -65,7 +66,7 @@ LookUp(
 
 Power Apps therefore no longer needs to count the operational `Access Requests` list directly.
 
-## Dashboard Refresh
+## Earlier Power Apps Dashboard Refresh
 
 `OperationsDashboardScreen.OnVisible` contains:
 
