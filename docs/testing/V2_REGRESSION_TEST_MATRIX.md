@@ -113,7 +113,7 @@ repository locations have not yet been established.
 
 - Tests represent specific observed scenarios, not exhaustive coverage.
 - Concurrent updates have not been verified.
-- Full approval-to-fulfillment regression remains pending.
+- Approval and manual fulfillment passed separately in documented scenarios; a fresh combined V2 approval-to-fulfillment end-to-end regression remains pending.
 - Role-based permission testing requires further verification.
 - Flow pagination and scalability require additional review.
 - The dashboard currently uses SharePoint list-based reporting,
@@ -125,10 +125,10 @@ Before declaring V2 complete:
 
 - [x] Validate published dashboard reporting.
 - [x] Verify SLA integrity after dashboard update.
-- [ ] Review essential request lifecycle behavior.
-- [ ] Review basic permissions and auditability.
-- [ ] Document remaining limitations.
-- [ ] Complete portfolio README and architecture overview.
+- [x] Review essential request lifecycle behavior.
+- [x] Review basic permissions and auditability.
+- [x] Document remaining limitations.
+- [x] Complete portfolio README and architecture overview.
 - [ ] Create final V2 release checkpoint.
 
 Advanced concurrency testing, performance optimization,
@@ -137,10 +137,16 @@ may be addressed in V3.
 
 ## 9. Next Action
 
-Review pending V2 scenarios against existing project journal
-evidence before performing additional tests.
+Prepare the V2 portfolio release checkpoint after reviewing the
+final documentation changes and Git repository status.
 
-Do not mark a test PASS without supporting evidence.
+V2-012 remains PENDING because SharePoint data-layer permission
+enforcement has not been fully implemented or verified.
+
+A fresh combined approval-to-fulfillment regression also remains
+outside the currently verified test coverage.
+
+Do not describe V2 as production-ready for sensitive access requests.
 
 ### SLA Regression Evidence
 
