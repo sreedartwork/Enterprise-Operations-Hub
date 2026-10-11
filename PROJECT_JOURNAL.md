@@ -2035,3 +2035,38 @@ This demonstrates the functional integration between SharePoint request data, th
 ### Status
 
 **Published dashboard end-to-end functional test: PASSED.**
+
+## V2 — Step 41: SLA Integrity Verification
+
+**Date:** October 11, 2026
+**Result:** PASS — tested request retained its SLA values
+
+### Test Objective
+
+Confirm that changing Approval Decision from Pending to Approved for the completed `Test - V2 SLA Regression` request did not overwrite its previously recorded SLA information.
+
+### Verified Values
+
+- Status: Completed
+- Approval Decision: Approved
+- Priority: Normal
+- SLA Status: Met
+- SLA Due Date: October 12, 2026, 2:07 PM
+- SLA At Risk Date: October 12, 2026, 2:07 AM
+- Completed Date: October 10, 2026, 2:26 PM
+
+### Verification Method
+
+Opened the existing SharePoint Access Requests item in its detail view and inspected the fields. Captured screenshots on October 11, 2026. No additional edits were made.
+
+### Outcome
+
+The recorded SLA status and dates matched the pre-test values. The approval-decision change did not visibly alter the completed request's SLA outcome in this tested scenario.
+
+### Limitations
+
+This verifies one completed request after one approval-decision change. It does not establish behavior under concurrent updates or all possible workflow transitions.
+
+### Next Step
+
+Continue V2 release closeout with a formal regression test matrix and documentation review.
