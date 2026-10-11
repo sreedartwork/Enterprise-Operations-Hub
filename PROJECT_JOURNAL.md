@@ -1917,3 +1917,55 @@ The dashboard now counts requests based on their Approval Decision rather than t
 - Validate reporting behavior across additional request scenarios.
 - Review pagination and scalability considerations.
 - Complete final V2 regression testing and portfolio documentation.
+
+## October 10, 2026 — V2 Operations Dashboard Published
+
+**Project:** Enterprise Operations Hub V2  
+**Platform:** SharePoint Online  
+**Status:** PASSED — Dashboard integration and publication
+
+### Objective
+
+Integrate the existing automated Request Metrics list into the Enterprise Operations Hub homepage to provide centralized operational reporting.
+
+### Work Completed
+
+- Opened the Enterprise Operations Hub homepage in SharePoint Edit mode.
+- Created a new one-column section beneath Request Access and Track Requests.
+- Added the **Operations Dashboard** heading using Heading 2 formatting.
+- Inserted the native SharePoint List web part.
+- Connected the web part to the existing Request Metrics list.
+- Verified that all six metric fields were displayed.
+- Published the updated SharePoint homepage.
+
+### Verified Dashboard Metrics
+
+| Metric           | Value |
+| ---------------- | ----: |
+| Total Requests   |    25 |
+| Pending Approval |     7 |
+| Approved         |     3 |
+| In Progress      |     1 |
+| Completed        |     7 |
+| Overdue          |     6 |
+
+### Architecture
+
+**Access Requests (SharePoint List)**  
+→ **Access Request - Update Dashboard Metrics (Power Automate)**  
+→ **Request Metrics (SharePoint List)**  
+→ **Operations Dashboard (SharePoint Homepage)**
+
+### Validation Outcome
+
+**PASS:** The published SharePoint homepage successfully displays the existing Request Metrics data through the native List web part.
+
+The dashboard uses SharePoint list data maintained by Power Automate rather than manually entered values.
+
+### Remaining Work
+
+- Verify that subsequent request changes are reflected on the published homepage.
+- Consider replacing the table layout with visual KPI cards.
+- Complete final dashboard and workflow regression testing.
+- Review performance and pagination considerations.
+- Prepare portfolio screenshots, architecture documentation, and a demonstration walkthrough.
