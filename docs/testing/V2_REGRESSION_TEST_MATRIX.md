@@ -27,10 +27,10 @@ that have not yet been fully tested.
 
 | ID     | Component     | Test Scenario                                        | Expected Result                                            | Status  |
 | ------ | ------------- | ---------------------------------------------------- | ---------------------------------------------------------- | ------- |
-| V2-001 | SLA           | Initialize SLA for a request                         | Appropriate SLA dates and status are populated             | PARTIAL |
-| V2-002 | SLA           | Recalculate SLA after relevant changes               | SLA dates update according to configured policy            | PARTIAL |
-| V2-003 | SLA           | Complete request within SLA                          | SLA outcome is recorded as Met                             | PARTIAL |
-| V2-004 | SLA           | Detect overdue requests                              | Overdue state is reflected correctly                       | PARTIAL |
+| V2-001 | SLA           | Initialize SLA for a request                         | Appropriate SLA dates and status are populated             | PASS    |
+| V2-002 | SLA           | Recalculate SLA after relevant changes               | SLA dates update according to configured policy            | PASS    |
+| V2-003 | SLA           | Complete request within SLA                          | SLA outcome is recorded as Met                             | PASS    |
+| V2-004 | SLA           | Detect overdue requests                              | Overdue state is reflected correctly                       | PASS    |
 | V2-005 | Dashboard     | Publish Request Metrics on homepage                  | Metrics visible on published SharePoint page               | PASS    |
 | V2-006 | Dashboard     | Update Approved Requests metric                      | Approved count increases after qualifying change           | PASS    |
 | V2-007 | Dashboard     | Preserve unrelated metric counts                     | Other displayed counts remain unchanged in tested scenario | PASS    |
@@ -141,3 +141,31 @@ Review pending V2 scenarios against existing project journal
 evidence before performing additional tests.
 
 Do not mark a test PASS without supporting evidence.
+
+### SLA Regression Evidence
+
+- **V2-001 — SLA Initialization:** `PROJECT_JOURNAL.md`,
+  lines 1743–1773. Fresh-request initialization populated
+  the SLA deadline and status.
+
+- **V2-002 — SLA Recalculation:** `PROJECT_JOURNAL.md`,
+  lines 1693–1732 and 1743–1773. High-to-Normal priority
+  changes recalculated and saved SLA dates.
+
+- **V2-003 — SLA Completion:** `PROJECT_JOURNAL.md`,
+  lines 1781–1821. Completion before the deadline recorded
+  SLA Status = Met and populated Completed Date.
+
+- **V2-004 — Overdue Detection:** `PROJECT_JOURNAL.md`,
+  overdue escalation test near line 1625. The scheduled
+  flow updated the request to Overdue and successfully
+  delivered an escalation email.
+
+### Regression Coverage Summary
+
+- 8 of 13 regression scenarios: PASS
+- 5 of 13 regression scenarios: PENDING
+- 0 scenarios: FAIL
+
+These results represent the documented test scenarios,
+not exhaustive production validation.
