@@ -25,21 +25,21 @@ that have not yet been fully tested.
 
 ## 3. Regression Test Matrix
 
-| ID     | Component     | Test Scenario                                        | Expected Result                                            | Status  |
-| ------ | ------------- | ---------------------------------------------------- | ---------------------------------------------------------- | ------- |
-| V2-001 | SLA           | Initialize SLA for a request                         | Appropriate SLA dates and status are populated             | PASS    |
-| V2-002 | SLA           | Recalculate SLA after relevant changes               | SLA dates update according to configured policy            | PASS    |
-| V2-003 | SLA           | Complete request within SLA                          | SLA outcome is recorded as Met                             | PASS    |
-| V2-004 | SLA           | Detect overdue requests                              | Overdue state is reflected correctly                       | PASS    |
-| V2-005 | Dashboard     | Publish Request Metrics on homepage                  | Metrics visible on published SharePoint page               | PASS    |
-| V2-006 | Dashboard     | Update Approved Requests metric                      | Approved count increases after qualifying change           | PASS    |
-| V2-007 | Dashboard     | Preserve unrelated metric counts                     | Other displayed counts remain unchanged in tested scenario | PASS    |
-| V2-008 | SLA Integrity | Change approval decision on completed request        | Previously recorded SLA values remain unchanged            | PASS    |
-| V2-009 | Approval      | Submission through approval or rejection             | Decision and request state remain consistent               | PENDING |
-| V2-010 | Fulfillment   | Approved request proceeds through fulfillment        | Fulfillment and completion are recorded correctly          | PENDING |
-| V2-011 | Audit         | Verify activity history                              | Relevant actions and outcomes are traceable                | PENDING |
-| V2-012 | Permissions   | Review requester, approver, and administrator access | Permissions align with intended roles                      | PENDING |
-| V2-013 | Reliability   | Review duplicate updates and flow triggers           | No unintended duplicate processing in tested scenarios     | PENDING |
+| ID     | Component     | Test Scenario                                        | Expected Result                                                    | Status  |
+| ------ | ------------- | ---------------------------------------------------- | ------------------------------------------------------------------ | ------- |
+| V2-001 | SLA           | Initialize SLA for a request                         | Appropriate SLA dates and status are populated                     | PASS    |
+| V2-002 | SLA           | Recalculate SLA after relevant changes               | SLA dates update according to configured policy                    | PASS    |
+| V2-003 | SLA           | Complete request within SLA                          | SLA outcome is recorded as Met                                     | PASS    |
+| V2-004 | SLA           | Detect overdue requests                              | Overdue state is reflected correctly                               | PASS    |
+| V2-005 | Dashboard     | Publish Request Metrics on homepage                  | Metrics visible on published SharePoint page                       | PASS    |
+| V2-006 | Dashboard     | Update Approved Requests metric                      | Approved count increases after qualifying change                   | PASS    |
+| V2-007 | Dashboard     | Preserve unrelated metric counts                     | Other displayed counts remain unchanged in tested scenario         | PASS    |
+| V2-008 | SLA Integrity | Change approval decision on completed request        | Previously recorded SLA values remain unchanged                    | PASS    |
+| V2-009 | Approval      | Submission through approval or rejection             | Decision and request state remain consistent                       | PASS    |
+| V2-010 | Fulfillment   | Approved request proceeds through manual fulfillment | Fulfillment and completion are recorded correctly                  | PASS    |
+| V2-011 | Audit         | Verify activity history                              | Relevant status changes create traceable activity records          | PASS    |
+| V2-012 | Permissions   | Review requester, approver, and administrator access | Permissions align with intended roles at the SharePoint data layer | PENDING |
+| V2-013 | Reliability   | Review duplicate updates and flow triggers           | No unintended duplicate processing in tested scenarios             | PASS    |
 
 ## 4. Verified Dashboard Test
 
@@ -161,11 +161,47 @@ Do not mark a test PASS without supporting evidence.
   flow updated the request to Overdue and successfully
   delivered an escalation email.
 
+### Additional Regression Evidence
+
+- **V2-009 — Approval Workflow:** `PROJECT_JOURNAL.md`,
+  lines 565–666. Approved and rejected paths tested end-to-end.
+
+- **V2-010 — Manual Fulfillment:** `PROJECT_JOURNAL.md`,
+  lines 750–828. Administrator assignment, fulfillment recording,
+  and request closure validated. Actual SharePoint permission
+  modification was not independently verified.
+
+- **V2-011 — Activity History:** `PROJECT_JOURNAL.md`,
+  lines 1127–1151. Status transitions created activity records.
+  Unrelated field changes did not create unnecessary events.
+
+- **V2-013 — Reliability:** `PROJECT_JOURNAL.md`,
+  lines 1518–1562, 1693–1734, and 1781–1822.
+  Duplicate SLA notifications and repeated updates were
+  suppressed in the documented test scenarios.
+
+### Security Limitation — V2-012
+
+Application-level role controls have been implemented in Power Apps.
+
+However, SharePoint data-layer permissions have not been fully
+implemented or verified for requester, approver, and administrator roles.
+
+Users with sufficient direct SharePoint list permissions may
+access records outside the intended Power Apps interface.
+
+V2 is therefore a portfolio/development demonstration and
+must not be represented as production-ready for sensitive
+access-request information.
+
+V2-012 remains PENDING.
+
 ### Regression Coverage Summary
 
-- 8 of 13 regression scenarios: PASS
-- 5 of 13 regression scenarios: PENDING
+- 12 of 13 regression scenarios: PASS
+- 1 of 13 regression scenarios: PENDING
 - 0 scenarios: FAIL
 
-These results represent the documented test scenarios,
-not exhaustive production validation.
+The PASS results apply only to documented test scenarios.
+Advanced concurrency, scalability, and production security
+validation remain outside the verified coverage.
