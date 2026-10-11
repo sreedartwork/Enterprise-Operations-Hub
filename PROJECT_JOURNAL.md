@@ -1860,3 +1860,60 @@ Confirmed that a SharePoint request status change successfully triggers the dash
 - Clarify whether the Approved metric should count overall request Status or Approval Decision.
 - Review flow scalability and SharePoint pagination considerations.
 - Continue dashboard integration and V2 testing.
+
+## October 10, 2026 — V2 Dashboard Approved Metrics Correction Validated
+
+**Project:** Enterprise Operations Hub V2  
+**Flow:** Access Request - Update Dashboard Metrics  
+**Result:** PASSED — Approved Requests filter correction
+
+### Issue Identified
+
+The Get Approved Requests action originally used the following OData filter:
+
+`Status eq 'Approved'`
+
+However, the Access Requests list does not contain Approved as a Status choice. Approval decisions are stored separately in the Approval Decision column.
+
+### Correction Implemented
+
+- Verified the SharePoint internal column name: `ApprovalDecision`.
+- Updated the Get Approved Requests filter to:
+
+  `ApprovalDecision eq 'Approved'`
+
+- Saved the Power Automate flow successfully.
+- Flow checker reported zero errors and one existing performance warning for Get Total Requests.
+
+### Test Performed
+
+1. Started a manual Power Automate test.
+2. Opened the existing SharePoint request: Test - HR Site Access.
+3. Changed Approval Decision from Pending to Approved.
+4. Saved the SharePoint request.
+5. Confirmed that the dashboard metrics flow executed successfully.
+6. Verified the updated values in the Request Metrics SharePoint list.
+
+### Verified Dashboard Metrics
+
+| Metric           | Result |
+| ---------------- | -----: |
+| Total Requests   |     25 |
+| Pending Approval |      7 |
+| Approved         |      3 |
+| In Progress      |      1 |
+| Completed        |      7 |
+| Overdue          |      6 |
+
+### Validation Outcome
+
+**PASS:** The corrected OData filter executed successfully, and the Approved metric increased from 0 to 3.
+
+The dashboard now counts requests based on their Approval Decision rather than their overall request Status.
+
+### Remaining Work
+
+- Complete dashboard integration and presentation.
+- Validate reporting behavior across additional request scenarios.
+- Review pagination and scalability considerations.
+- Complete final V2 regression testing and portfolio documentation.
