@@ -97,3 +97,40 @@ Complete **V2-012 SharePoint data-layer security validation** before beginning m
 ## Change Log
 
 - 2026-10-15 — Initial V3 roadmap drafted. Phases are proposed and subject to review.
+
+## October 19, 2026 — V3 Security Validation
+
+**Branch:** `v3-development`
+**Task:** V2-012 — SharePoint Data-Layer Security
+**Status:** IN PROGRESS
+
+### Work Completed
+
+- Reviewed SharePoint permissions for the Access Requests list.
+- Confirmed the list inherits permissions from the parent site.
+- Reviewed Owners, Members, and Visitors groups.
+- Created an unlicensed test employee account.
+- Confirmed the test account currently has no Access Requests list permissions.
+- Inspected Power Apps Requester field configuration.
+
+### Security Findings
+
+- Requester defaults to the signed-in user when creating a request.
+- Requester selection is searchable.
+- The form submits the selected Requester value.
+- No explicit application-level restriction was found preventing Requester changes.
+- SharePoint item-level settings currently allow users with sufficient list permissions to read and edit all items.
+
+### Next Steps
+
+1. Set `DataCardValue3.DisplayMode` to `DisplayMode.View`.
+2. Test Requester behavior in new and existing requests.
+3. Review SharePoint authorization and item-level access.
+4. Validate using a properly licensed employee identity when available.
+5. Document security findings and rerun regression tests.
+
+### Validation Status
+
+**V2-012 remains PENDING.**
+
+The application is a portfolio demonstration and has not been validated as production-ready.
