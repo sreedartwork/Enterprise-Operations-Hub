@@ -134,3 +134,25 @@ Complete **V2-012 SharePoint data-layer security validation** before beginning m
 **V2-012 remains PENDING.**
 
 The application is a portfolio demonstration and has not been validated as production-ready.
+
+## October 21, 2026 — V2-012 Requester Validation
+
+**Status:** IN PROGRESS
+
+### Findings
+
+- Confirmed the Requester field defaults to the signed-in user.
+- Confirmed the Requester field is locked in the Power Apps interface.
+- Attempted to submit a new security validation request.
+- Submission failed with a form validation error.
+- Observed that the form header retained the previously selected record's title.
+- Possible form-state issue identified; root cause not yet confirmed.
+
+### Next Steps
+
+- Investigate the form's New/Edit/View state transitions.
+- Resolve the submission failure.
+- Verify the saved Requester value in SharePoint.
+- Continue SharePoint data-layer security validation.
+
+**V2-012 remains PENDING.**
