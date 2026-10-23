@@ -156,3 +156,26 @@ The application is a portfolio demonstration and has not been validated as produ
 - Continue SharePoint data-layer security validation.
 
 **V2-012 remains PENDING.**
+
+### 2026-10-22 — Power Apps New Request Header Fix
+
+- Investigated an issue where the New button cleared the form,
+  but the header continued displaying the previously selected request.
+- Root cause: SelectedRecordTitle1.Text referenced
+  RecordsGallery1.Selected.Title regardless of the form mode.
+- Updated SelectedRecordTitle1.Text to:
+
+  If(
+  Form1.Mode = FormMode.New,
+  "New Access Request",
+  RecordsGallery1.Selected.Title
+  )
+
+- PASS: Preview confirmed the header displays "New Access Request"
+  when creating a new request.
+- PASS: New request form displays blank fields.
+- OBSERVED: Requester field automatically displays the signed-in user.
+- PENDING: Confirm the Power Apps changes are saved.
+- PENDING: Test successful submission of a new request.
+- PENDING: Publish the validated changes.
+- V2-012 SharePoint data-layer security validation remains pending.
