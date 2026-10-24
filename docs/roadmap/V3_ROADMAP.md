@@ -179,3 +179,17 @@ The application is a portfolio demonstration and has not been validated as produ
 - PENDING: Test successful submission of a new request.
 - PENDING: Publish the validated changes.
 - V2-012 SharePoint data-layer security validation remains pending.
+
+### 2026-10-23 — V3 Request Submission Troubleshooting
+
+- Reproduced the new access request submission failure.
+- Updated Form1.OnFailure to display Form1.Error.
+- Identified the failing field: Request Type.
+- Confirmed Request Type_DataCard1.Update = DataCardValue5.Selected.
+- Confirmed DataCardValue5.Items uses SharePoint Choices().
+- Confirmed DataCardValue5.DefaultSelectedItems = Parent.Default.
+- Confirmed Request Type_DataCard1.DataField = "RequestType".
+- Root cause remains under investigation.
+- Next: Inspect DataCardValue5.SelectMultiple and SharePoint choice configuration.
+- Submission validation: FAIL.
+- V2-012 data-layer security validation: PENDING.
