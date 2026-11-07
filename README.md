@@ -8,9 +8,9 @@ The Enterprise Operations Hub demonstrates a complete SharePoint access-request 
 
 **V1 Status:** Published and validated end-to-end
 
-**V2 Status:** Release validation — 12 regression tests PASS, 1 PENDING.
+**V2 Status:** Release validation — 13 of 13 documented regression scenarios PASS.
 
-**Deployment scope:** Portfolio/development demonstration. SharePoint data-layer permissions require additional validation before production use.
+**Deployment scope:** Portfolio/development demonstration. Documented role-isolation tests passed; broader security and production-readiness validation remains outstanding.
 
 ## V1 Highlights
 
@@ -105,15 +105,27 @@ Actual SharePoint permission grants were not independently verified during fulfi
 
 The V2 regression matrix currently records:
 
-- **12 PASS**
-- **1 PENDING**
+- **13 PASS**
+- **0 PENDING**
 - **0 FAIL**
 
-The remaining pending scenario, V2-012, concerns SharePoint data-layer permissions.
+These results represent documented test scenarios, not exhaustive production validation.
 
-Power Apps includes role-aware requester and administrator interfaces. However, SharePoint item-level access restrictions have not been fully implemented or verified.
+### SharePoint Access Security — V2-012
 
-Application-level filtering does not replace data-layer authorization.
+V2 introduces separate employee-facing and administrator SharePoint lists.
+
+- **Access Requests - Employee Intake:** Uses unique permissions and item-level restrictions so employees can access their own requests.
+- **Access Requests:** Restricted administrator list with unique permissions and owner-level administrative access.
+- **Approver separation:** A designated test approver received and approved a request through Power Automate without direct access to the administrator list.
+- **Security verification:** Direct administrator-list access was denied to the designated approver. The target test account also retained no administrator-list permissions.
+- **Duplicate prevention:** Intake-to-administrator processing successfully avoided duplicate creation during a sequential replay test.
+
+The Enterprise Operations Hub Approvers SharePoint group was created for role designation. Approval assignment in the tested Power Automate workflow is configured for a specific user; group membership does not automatically enforce approval routing.
+
+Application-level filtering does not replace SharePoint data-layer authorization.
+
+Remaining work includes rejection-path validation for the updated approver configuration, simultaneous-request stress testing, broader security testing, and scalability assessment.
 
 **V2 is a portfolio/development demonstration and is not production-ready for sensitive access-request information.**
 
@@ -123,7 +135,7 @@ See the [V2 Regression Test Matrix](docs/testing/V2_REGRESSION_TEST_MATRIX.md) f
 
 Potential future improvements include:
 
-- SharePoint data-layer security and multi-account testing
+- Expanded SharePoint security validation and multi-account negative-path testing
 - Advanced concurrency and duplicate-processing protection
 - Expanded failure handling and monitoring
 - Large-list performance optimization
