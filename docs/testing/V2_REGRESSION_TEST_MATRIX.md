@@ -2,8 +2,8 @@
 
 **Project:** Enterprise Operations Hub  
 **Version:** V2  
-**Branch:** `v2-development`  
-**Last Updated:** October 11, 2026  
+**Branch:** `v3-development`
+**Last Updated:** November 6, 2026
 **Status:** Release Validation In Progress
 
 ---
@@ -38,7 +38,7 @@ that have not yet been fully tested.
 | V2-009 | Approval      | Submission through approval or rejection             | Decision and request state remain consistent                       | PASS    |
 | V2-010 | Fulfillment   | Approved request proceeds through manual fulfillment | Fulfillment and completion are recorded correctly                  | PASS    |
 | V2-011 | Audit         | Verify activity history                              | Relevant status changes create traceable activity records          | PASS    |
-| V2-012 | Permissions   | Review requester, approver, and administrator access | Permissions align with intended roles at the SharePoint data layer | PENDING |
+| V2-012 | Permissions   | Review requester, approver, and administrator access | Permissions align with intended roles at the SharePoint data layer | PASS |
 | V2-013 | Reliability   | Review duplicate updates and flow triggers           | No unintended duplicate processing in tested scenarios             | PASS    |
 
 ## 4. Verified Dashboard Test
@@ -109,12 +109,24 @@ No additional modifications were made during verification.
 Screenshots were reviewed during testing. Their permanent
 repository locations have not yet been established.
 
+### V2-012 Security Validation Evidence
+
+- `docs/checkpoints/V2-012-Validation-2026-11-05.md`
+- November 5: Employee intake isolation, duplicate prevention,
+  concurrency configuration, and intake-to-admin transfer.
+- November 6: Designated approver received and approved a request
+  through Power Automate.
+- Approval Decision and Status updated to Approved.
+- EOH Test Employee was denied direct access to the administrator list.
+- EOH Test Employee 2 retained None permissions on that list.
+- Git commit `9ef1b34` documents the validation.
+
 ## 7. Known Limitations
 
 - Tests represent specific observed scenarios, not exhaustive coverage.
 - Concurrent updates have not been verified.
 - Approval and manual fulfillment passed separately in documented scenarios; a fresh combined V2 approval-to-fulfillment end-to-end regression remains pending.
-- Role-based permission testing requires further verification.
+- Documented employee and approver role-isolation tests passed; broader role and production security testing remains outstanding.
 - Flow pagination and scalability require additional review.
 - The dashboard currently uses SharePoint list-based reporting,
   not graphical KPI cards.
@@ -137,16 +149,16 @@ may be addressed in V3.
 
 ## 9. Next Action
 
-Prepare the V2 portfolio release checkpoint after reviewing the
-final documentation changes and Git repository status.
+V2-012 documented role-isolation and approval-processing tests passed.
 
-V2-012 remains PENDING because SharePoint data-layer permission
-enforcement has not been fully implemented or verified.
+Next actions:
+- Review final V2 release documentation.
+- Confirm no unintended permission changes.
+- Preserve remaining security and concurrency limitations.
+- Complete final release review.
 
-A fresh combined approval-to-fulfillment regression also remains
-outside the currently verified test coverage.
-
-Do not describe V2 as production-ready for sensitive access requests.
+V2 remains a portfolio/development demonstration and must not
+be represented as production-ready for sensitive access requests.
 
 ### SLA Regression Evidence
 
@@ -186,28 +198,32 @@ Do not describe V2 as production-ready for sensitive access requests.
   Duplicate SLA notifications and repeated updates were
   suppressed in the documented test scenarios.
 
-### Security Limitation — V2-012
+### Security Validation — V2-012
 
-Application-level role controls have been implemented in Power Apps.
+**Result: PASS for documented scenarios.**
 
-However, SharePoint data-layer permissions have not been fully
-implemented or verified for requester, approver, and administrator roles.
+Employee-facing and administrator SharePoint lists are separated.
+The administrator list uses unique permissions.
 
-Users with sufficient direct SharePoint list permissions may
-access records outside the intended Power Apps interface.
+EOH Test Employee received and approved a request through
+Power Automate without direct access to the administrator list.
 
-V2 is therefore a portfolio/development demonstration and
-must not be represented as production-ready for sensitive
-access-request information.
+SharePoint denied the designated approver direct list access.
+EOH Test Employee 2 also retained None permissions on that list.
 
-V2-012 remains PENDING.
+No list-wide permissions were granted to the Approvers group.
+No actual SharePoint resource permissions were granted during testing.
+
+Remaining limitations include broader negative-path testing,
+simultaneous-request stress testing, scalability, and production
+security assessment.
 
 ### Regression Coverage Summary
 
-- 12 of 13 regression scenarios: PASS
-- 1 of 13 regression scenarios: PENDING
+- 13 of 13 regression scenarios: PASS
+- 0 of 13 regression scenarios: PENDING
 - 0 scenarios: FAIL
 
 The PASS results apply only to documented test scenarios.
-Advanced concurrency, scalability, and production security
-validation remain outside the verified coverage.
+Advanced concurrency, scalability, broader negative-path testing,
+and production security validation remain outside verified coverage.
