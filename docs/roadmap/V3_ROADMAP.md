@@ -193,3 +193,29 @@ The application is a portfolio demonstration and has not been validated as produ
 - Next: Inspect DataCardValue5.SelectMultiple and SharePoint choice configuration.
 - Submission validation: FAIL.
 - V2-012 data-layer security validation: PENDING.
+
+## November 8, 2026 — V2 Portfolio Release Validation Update
+
+**Status:** V2 portfolio validation complete within documented test scope.
+
+### Completed Validation
+
+- V2 regression matrix records 13 PASS, 0 PENDING, and 0 FAIL.
+- Employee Intake and administrator Access Requests lists have separate SharePoint permission boundaries.
+- Designated approver successfully processed an approval without direct administrator-list access.
+- Direct administrator-list access was denied to the designated test approver.
+- Sequential intake replay testing confirmed duplicate prevention in the tested scenario.
+- README, V2 solution architecture, security checkpoint, and release readiness checklist are published.
+
+### Outstanding V3 Work
+
+- Validate the updated approval workflow's rejection path.
+- Expand multi-account and negative-path security testing.
+- Test simultaneous-request concurrency and duplicate prevention.
+- Evaluate dynamic approval routing instead of hardcoded user assignment.
+- Independently verify actual SharePoint permission grants during fulfillment.
+- Expand monitoring, failure recovery, and scalability testing.
+
+**Release decision:** V2 is ready for portfolio demonstration within its documented validation scope. It is not validated for production deployment involving sensitive access-request information.
+
+See [V2 Release Readiness Checklist](../releases/V2_RELEASE_READINESS_CHECKLIST.md).
