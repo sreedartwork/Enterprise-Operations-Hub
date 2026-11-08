@@ -53,3 +53,38 @@ The following tests remain pending:
 Resume with Microsoft Entra password reset and employee access validation.
 
 V2-012 remains PENDING.
+
+---
+
+## November 8, 2026 — Final V2 Portfolio Security Validation Update
+
+**Current status:** PASS within the documented V2 portfolio test scope.
+
+The October 27 findings above are historical and describe the earlier SharePoint permission configuration. They do not represent the final V2 security architecture.
+
+### Updated SharePoint Security Architecture
+
+- `Access Requests - Employee Intake` is the employee-facing submission list with separate permissions and item-level restrictions.
+- `Access Requests` is the restricted administrator list with unique permissions.
+- Employees are not intended to receive direct access to the administrator list.
+- The designated test approver successfully completed an approval through Power Automate Approvals without direct administrator-list access.
+- Direct access to the administrator list was denied to the designated test approver.
+
+### Validated Behavior
+
+- Employee intake isolation was validated within the documented test scope.
+- Intake-to-administrator transfer was validated.
+- Sequential replay testing confirmed duplicate prevention in the tested scenario.
+- The V2 regression matrix records 13 PASS, 0 PENDING, and 0 FAIL.
+
+### Remaining Security Limitations
+
+- The updated approval rejection path requires validation.
+- Broader multi-account and negative-path testing remains outstanding.
+- Simultaneous-request concurrency and duplicate prevention have not been stress-tested.
+- Approval routing currently uses a specific assigned test user rather than dynamic group-based routing.
+- Actual SharePoint permission grants during fulfillment have not been independently verified.
+
+**Release classification:** Suitable for portfolio demonstration within the documented validation scope. Not validated for production deployment involving sensitive access-request information.
+
+See the V2 regression matrix, V2-012 validation checkpoint, and V2 release readiness checklist for supporting evidence.
